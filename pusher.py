@@ -3,8 +3,8 @@ from datetime import datetime
 
 today = datetime.now().strftime('generated at %H:%M:%S')
 
-os.system('git add .')
-os.system(f"git commit -m {today}")
+os.system(f"git commit -am {today}")
+print(today)
 os.system('git push colab master')
 
 print('manjiw!')
