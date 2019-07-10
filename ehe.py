@@ -4,6 +4,7 @@ import pandas as pd
 import json
 
 df = pd.DataFrame(columns=['title', 'image', 'url', 'date'])
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 
 def pull_data_kompas(domain, date, name, pagination=50):
@@ -15,7 +16,7 @@ def pull_data_kompas(domain, date, name, pagination=50):
                 print(url)
 
                 # Get article from website
-                req = requests.get(url)
+                req = requests.get(url, headers = headers)
                 soup = BeautifulSoup(req.content, 'lxml')
 
                 try:
