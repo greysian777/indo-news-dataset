@@ -114,8 +114,17 @@ def pull_source(link=None):
     headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
     r = requests.get(link, headers = headers)
     s = BeautifulSoup(r.content, 'lxml')
-    return (s.get_text(separator=' '))
+    return (s.prettify())
     
+
+def pull_paragraph(link = None): # pull paragraph without 'Baca Juga' 
+    headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
+    r = requests.get(link, headers = headers)
+    s = BeautifulSoup(r.content, 'lxml')
+    reader = s.find('div',{'class':'read__content'})
+    for child in reader.find_all("strong"):
+        child.decompose()
+    return(reader.get_text())
 
 def main():
 
