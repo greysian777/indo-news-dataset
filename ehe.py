@@ -109,6 +109,13 @@ def pull_data_kompas(domain, date, name, pagination=50):
     except:
         pass
 
+    
+def pull_source(link=None): 
+    headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
+    r = requests.get(link, headers = headers)
+    s = BeautifulSoup(r.content, 'lxml')
+    return (s.get_text(separator=' '))
+    
 
 def main():
 
@@ -116,4 +123,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    frame = pd.read_csv('KOMPAS 2018.csv')
+    print(pull_paragraf(frame.link[0]))
