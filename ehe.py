@@ -117,7 +117,7 @@ def pull_source(link=None):
     return (s.prettify())
     
 
-def pull_paragraph(link = None): # pull paragraph without 'Baca Juga' 
+def pull_paragraf(link = None): 
     headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
     r = requests.get(link, headers = headers)
     s = BeautifulSoup(r.content, 'lxml')
