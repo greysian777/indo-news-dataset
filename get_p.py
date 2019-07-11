@@ -15,6 +15,7 @@ for i, link in enumerate(links):
         p = pull_paragraf(link)
         html = pull_source(link)
     except:
+        print('sedang terhalang.')
         time.sleep(60)
         p, html = None, None
         pass
