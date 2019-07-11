@@ -18,5 +18,5 @@ for i, link in enumerate(links):
     df_ = pd.Series([link, p, html])
     df__ = p_source.append(df_, ignore_index=True)
     df__.to_csv('KOMPAS 2019_p_dan_source.csv', mode='a')
-    print(f'done {i}/{len(links)}')
+    print(f'done {i+1}/{len(links)}')
 
