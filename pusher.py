@@ -1,16 +1,15 @@
 import os 
 from datetime import datetime
 
-def push_this():
+pre_message = f'[AUTO GENERATED] {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}'
 
-    today = datetime.now().strftime('[COLAB] generated at %H:%M:%S')
-    print(today)
-    with open('logger.txt', 'a') as fd:
-        fd.write(f'\n{today}')
-    # os.system('git push colab googlecolab')
-    os.system('drive add_remote')
+os.system('git add .')
 
-    print('manjiw!')
-    
-if __name__ == "__main__":
-    push_this()
+c_m = input('commit message: \n>')
+if c_m: 
+    os.system(f"git commit -m '{c_m}'")
+else: 
+    os.system(f'git commit -m "{pre_message}"')
+
+os.system('git push origin master')
+os.system('git push mirror master')
