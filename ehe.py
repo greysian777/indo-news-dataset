@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from pertanggalan import generate_n_days_from_today, file_name
 import requests
 import pandas as pd
 import time
@@ -142,9 +143,8 @@ def get_latest_date(path_to_csv):
 
 def main():
 
-    pull_data_kompas('https://indeks.kompas.com/all/', 50, 365)
+    pull_data_kompas('https://indeks.kompas.com/all/', generate_n_days_from_today(7), name=file_name)
 
 
 if __name__ == "__main__":
-    frame = pd.read_csv('KOMPAS 2018.csv')
-    print(pull_paragraf(frame.link[0]))
+    main()

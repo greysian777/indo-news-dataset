@@ -10,7 +10,6 @@ tanggal_terakhir = get_latest_date('csv/berhasil_TEST_1.csv')
 
 
 file_name = date.today().strftime("%Y-%m-%d")
-
 list_of_dates_to_be_updated = generate_date_from_range(last=tanggal_terakhir)
 
 def main(): 

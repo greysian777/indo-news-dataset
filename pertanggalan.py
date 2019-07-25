@@ -16,7 +16,7 @@ def generate_date(prev_date):
     return date_list
 
 
-def generate_n_date_from_today(n_days=174):
+def generate_n_days_from_today(n_days=174):
     return [date.today() - timedelta(i) for i in range(1, n_days)]
 
 
@@ -28,6 +28,8 @@ def generate_date_from_range(last, latest=date.today()):
     return [latest-timedelta(i) for i in range(1,delta.days)]
 
 
+
+file_name = date.today().strftime("%Y-%m-%d")
 tahun_2018 = list(chunk(generate_date(366), 73))
 
 q1 = tahun_2018[0]
@@ -36,6 +38,6 @@ q3 = tahun_2018[2]
 q4 = tahun_2018[3]
 q5 = tahun_2018[4]
 
-tahun2019 = generate_n_date_from_today()
+tahun2019 = generate_n_days_from_today()
 
 link = 'https://indeks.kompas.com/all/'

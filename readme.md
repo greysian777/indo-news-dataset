@@ -57,6 +57,11 @@ skips all jeo links in kompas, few samples:
 - [sample201](https://nasional.kompas.com/jeo/terorisme-menurut-jokowi-maruf-dan-prabowo-sandiaga)
 
 
+## updating to current date
+make sure you have already some csv to begin with.
+`python updater.py`
+
+
 !TODO 
-- [ ] make an updater for latest news. 
+- [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
