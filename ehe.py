@@ -35,12 +35,12 @@ user_agent_list = [
 ]
 
 
-def pull_data_kompas(domain, date, name, pagination=50):
+def pull_data_kompas(link, list_of_date, name, pagination=50):
     try:
-        for date_current in date:
+        for date_current in list_of_date:
             for j in range(1, pagination):
                 dict_ = {}
-                url = domain + str(date_current) + '/' + str(j)
+                url = link + str(date_current) + '/' + str(j)
                 print(url)
 
                 # Get article from website
@@ -103,7 +103,7 @@ def pull_data_kompas(domain, date, name, pagination=50):
                     df_ = pd.Series(dict_)
                     df1 = df.append(df_, ignore_index=True)
 
-                    df1.to_csv(f'berhasil_{name}.csv', mode='a', header=False)
+                    df1.to_csv(f'csv/berhasil_{name}.csv', mode='a', header=False)
             print(date_current)
         return "done"
     except:

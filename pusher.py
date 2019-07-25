@@ -1,10 +1,16 @@
 import os 
 from datetime import datetime
 
-today = datetime.now().strftime('generated at %H:%M:%S')
-os.system("git add .")
-os.system(f"git commit -m '{today}'")
-print(today)
-os.system('git push colab master')
+def push_this():
 
-print('manjiw!')
+    today = datetime.now().strftime('[COLAB] generated at %H:%M:%S')
+    print(today)
+    with open('logger.txt', 'a') as fd:
+        fd.write(f'\n{today}')
+    # os.system('git push colab googlecolab')
+    os.system('drive add_remote')
+
+    print('manjiw!')
+    
+if __name__ == "__main__":
+    push_this()
