@@ -2,8 +2,13 @@
 
 made a dataset. 
 ## how it works 
-`python scrape_this.py <N_DAYS_TO_SCRAPE_FROM_TODAY>`
-only scrapes the `<p>` tag on link that is made from `ehe.py`
+**generate csv full of links for n_days from today**    
+`python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY>`    
+
+**scrape paragraph from csv full of links**   
+`python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
+only scrapes the `<p>` tag on link that is made from csv full of links
+
 
 ### updating dataset
 autoa

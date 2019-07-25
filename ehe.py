@@ -2,10 +2,13 @@ from bs4 import BeautifulSoup
 from pertanggalan import generate_n_days_from_today, file_name
 import requests
 import pandas as pd
-import time
+import time, os
 import random 
+from datetime import date
 
-df = pd.DataFrame(columns=['title', 'image', 'url', 'date'])
+
+df = pd.DataFrame()
+file_name = date.today().strftime("%Y-%m-%d")
 
 user_agent_list = [
    #Chrome
@@ -87,7 +90,7 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
 
                     # Get URL Article
                     try:
-                        url = box.find('a').get('href')
+                        linknya = box.find('a').get('href')
                     except:
                         print('href not found')
                         break
@@ -99,11 +102,12 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
                     # Get Title Article
                     dict_['title'] = title
                     dict_['image'] = image
-                    dict_['links'] = url
+                    dict_['links'] = linknya
                     dict_['date'] = date
                     df_ = pd.Series(dict_)
                     df1 = df.append(df_, ignore_index=True)
-
+                    if not os.path.exists('csv/'):
+                        os.makedirs('csv/')
                     df1.to_csv(f'csv/berhasil_{name}.csv', mode='a')
             print(date_current)
         return "done"
@@ -140,6 +144,12 @@ def get_latest_date(path_to_csv):
     df = pd.read_csv(path_to_csv)
     df.dropna(inplace=True)
     return df.sort_values(by='date', ascending=False).iloc[0][-1]
+
+def df_cleaner(path_to_csv): 
+    df = pd.read_csv(path_to_csv)
+    df.dropna(inplace=True)
+
+    df.to_csv(path_to_csv)
 
 def main():
 

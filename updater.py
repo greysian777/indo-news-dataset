@@ -1,8 +1,7 @@
 from ehe import pull_data_kompas, get_latest_date
 from pertanggalan import generate_date_from_range, link
 import pandas as pd 
-from datetime import def funcname(self, parameter_list):
-    raise NotImplementedError
+from datetime import datetime
 
 # get csv from folder
 # TESTING WITH BERHASIL_2019.csv

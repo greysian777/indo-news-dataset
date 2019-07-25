@@ -13,4 +13,10 @@ else:
 
 os.system('git push origin master')
 os.system('git push mirror master')
-os.system('drive add_remote')
+
+
+drive = input('do you want to upload to google drive y/n? (default is n)')
+if drive.lower() == 'y': 
+    os.system('drive add_remote')
+else: 
+    print('you're done')
