@@ -122,8 +122,16 @@ def pull_paragraf(link = None):
     r = requests.get(link, headers = headers)
     s = BeautifulSoup(r.content, 'lxml')
     reader = s.find('div',{'class':'read__content'})
-    for child in reader.find_all("strong"):
-        child.decompose()
+    if 'MAAF KAMI TIDAK MENEMUKAN HALAMAN YANG ANDA CARI' in s.text: 
+        return '404'
+    else if type(reader) == type(None): 
+        reader=s.find('div', {'class': 'main-artikel-paragraf'})
+    else if 'jeo' in link: 
+        print('jeo link')
+        return 'JEO TYPED SHIT'
+    else:
+        for child in reader.find_all("strong"):
+            child.decompose()
     return(reader.get_text())
 
 def main():
