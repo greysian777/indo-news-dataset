@@ -71,4 +71,6 @@ make sure you have already some csv to begin with.
 !TODO 
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
-- [ ] implement cli
+- [x] implement cli
+- [ ] checker buat csv_link dengan csv_p 
+- [ ] merging stuff for csv

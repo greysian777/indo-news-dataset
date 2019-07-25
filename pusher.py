@@ -19,4 +19,4 @@ drive = input('do you want to upload to google drive y/n? (default is n)')
 if drive.lower() == 'y': 
     os.system('drive add_remote')
 else: 
-    print('you're done')
+    print('you\'re done')
