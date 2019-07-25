@@ -13,3 +13,4 @@ else:
 
 os.system('git push origin master')
 os.system('git push mirror master')
+os.system('drive add_remote')

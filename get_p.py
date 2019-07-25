@@ -6,7 +6,7 @@ import os
 
 df = pd.read_csv('berhasil_2019.csv')
 df1 = pd.read_csv('KOMPAS 2018.csv')
-df.columns = ['0', 'judul', 'image', 'link', 'tanggal']
+df.columns = ['judul', 'image', 'link', 'tanggal']
 links = df.link
 links = links[31499:]
 

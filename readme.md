@@ -2,11 +2,12 @@
 
 made a dataset. 
 ## how it works 
-update to csv per news that it scrapes
-`ehe.py` 
-only scrapes the title, image, url, and date
-`get_p` 
+`python scrape_this.py <N_DAYS_TO_SCRAPE_FROM_TODAY>`
 only scrapes the `<p>` tag on link that is made from `ehe.py`
+
+### updating dataset
+autoa
+`python updater.py`
 
 skips all jeo links in kompas, few samples: 
 - [sample4](https://entertainment.kompas.com/jeo/artis-indonesia-dan-moge-sekadar-hobi-dan-gaya)
@@ -65,3 +66,4 @@ make sure you have already some csv to begin with.
 !TODO 
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
+- [ ] implement cli
