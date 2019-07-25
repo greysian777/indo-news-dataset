@@ -103,7 +103,7 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
                     df_ = pd.Series(dict_)
                     df1 = df.append(df_, ignore_index=True)
 
-                    df1.to_csv(f'csv/berhasil_{name}.csv', mode='a', header=False)
+                    df1.to_csv(f'csv/berhasil_{name}.csv', mode='a')
             print(date_current)
         return "done"
     except:
@@ -124,15 +124,20 @@ def pull_paragraf(link = None):
     reader = s.find('div',{'class':'read__content'})
     if 'MAAF KAMI TIDAK MENEMUKAN HALAMAN YANG ANDA CARI' in s.text: 
         return '404'
-    else if type(reader) == type(None): 
+    elif type(reader) == type(None): 
         reader=s.find('div', {'class': 'main-artikel-paragraf'})
-    else if 'jeo' in link: 
+    elif 'jeo' in link: 
         print('jeo link')
         return 'JEO TYPED SHIT'
     else:
         for child in reader.find_all("strong"):
             child.decompose()
     return(reader.get_text())
+
+def get_latest_date(path_to_csv): 
+    # assuming with the format of berhasil_2019.csv
+    df = pd.read_csv(path_to_csv)
+    return df.sort_values(by='date', ascending=False).iloc[0][-1]
 
 def main():
 

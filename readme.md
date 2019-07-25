@@ -59,4 +59,4 @@ skips all jeo links in kompas, few samples:
 
 !TODO 
 - [ ] make an updater for latest news. 
-- [ ] fix missing values in current dataset
+- [x] fix missing values in current dataset
