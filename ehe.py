@@ -98,7 +98,7 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
                     # Get Title Article
                     dict_['title'] = title
                     dict_['image'] = image
-                    dict_['url'] = url
+                    dict_['links'] = url
                     dict_['date'] = date
                     df_ = pd.Series(dict_)
                     df1 = df.append(df_, ignore_index=True)
@@ -137,6 +137,7 @@ def pull_paragraf(link = None):
 def get_latest_date(path_to_csv): 
     # assuming with the format of berhasil_2019.csv
     df = pd.read_csv(path_to_csv)
+    df.dropna(inplace=True)
     return df.sort_values(by='date', ascending=False).iloc[0][-1]
 
 def main():

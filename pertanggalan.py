@@ -1,4 +1,4 @@
-rfrom itertools import islice
+from itertools import islice
 from datetime import date, timedelta
 
 
@@ -8,7 +8,7 @@ def chunk(it, size):
 
 
 def generate_date(prev_date):
-date_list = []
+    date_list = []
     for i in range(1, prev_date):
         tanggal = date(2019, 1, 1) - timedelta(i)
         date_list.append(tanggal)
