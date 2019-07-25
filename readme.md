@@ -74,3 +74,4 @@ make sure you have already some csv to begin with.
 - [x] implement cli
 - [ ] checker buat csv_link dengan csv_p 
 - [ ] merging stuff for csv
+- [ ] sanity check buat 'jeo' di `ehe.py`

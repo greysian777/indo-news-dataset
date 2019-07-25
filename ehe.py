@@ -99,11 +99,14 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
                     date = date_current
                     # print(title, image, url)
 
-                    # Get Title Article
-                    dict_['title'] = title
-                    dict_['image'] = image
-                    dict_['links'] = linknya
-                    dict_['date'] = date
+                    if 'jeo' in linknya: 
+                        print('ada jeo')
+                        pass
+                    else: 
+                        dict_['title'] = title
+                        dict_['image'] = image
+                        dict_['links'] = linknya
+                        dict_['date'] = date
                     df_ = pd.Series(dict_)
                     df1 = df.append(df_, ignore_index=True)
                     if not os.path.exists('csv/'):
@@ -116,10 +119,13 @@ def pull_data_kompas(link, list_of_date, name, pagination=50):
 
     
 def pull_source(link=None): 
-    headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
-    r = requests.get(link, headers = headers)
-    s = BeautifulSoup(r.content, 'lxml')
-    return (s.prettify())
+    if not 'jeo' in link: 
+        headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
+        r = requests.get(link, headers = headers)
+        s = BeautifulSoup(r.content, 'lxml')
+        return (s.prettify())
+    else: 
+        pass
     
 
 def pull_paragraf(link = None): 
