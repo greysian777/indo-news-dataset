@@ -151,11 +151,26 @@ def get_latest_date(path_to_csv):
     df.dropna(inplace=True)
     return df.sort_values(by='date', ascending=False).iloc[0][-1]
 
-def df_cleaner(path_to_csv): 
+def df_cleaner(path_to_csv, kasih_judul=False): 
     df = pd.read_csv(path_to_csv)
-    df.dropna(inplace=True)
+#     df = df.dropna()
+#     df.reset_index(drop=True)
 
-    df.to_csv(path_to_csv)
+    if not kasih_judul: 
+        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
+        
+        df.to_csv(path_to_csv)
+    else: 
+        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
+        
+        print(df.head())
+        print(f'terdapat {df.columns} sebagai judul')
+        judul = [input(f'judul ke-{x}: \n>') for x in range(len(df.columns))]
+        df.columns = judul
+        df.to_csv(path_to_csv)
+    df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
+    return df
+#     df.to_csv(path_to_csv)
 
 def main():
 
