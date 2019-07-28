@@ -11,7 +11,6 @@ only scrapes the `<p>` tag on link that is made from csv full of links
 
 
 ### updating dataset
-autoa
 `python updater.py`
 
 skips all jeo links in kompas, few samples: 
@@ -72,6 +71,7 @@ make sure you have already some csv to begin with.
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
 - [x] implement cli
-- [ ] checker buat csv_link dengan csv_p 
 - [ ] merging stuff for csv
-- [ ] sanity check buat 'jeo' di `ehe.py`
+- [ ] buat multithreading pecah jadi 2 buat generate p 
+    - jadi 1 buat 1/2 csv, 1 buat sisanya
+- [x] sanity check buat 'jeo' di `ehe.py`

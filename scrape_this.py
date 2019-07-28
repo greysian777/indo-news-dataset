@@ -25,10 +25,6 @@ def generate_paragraphs(path_to_csv_links):
             time.sleep(60)
             p = None
             pass
-        # if i % 500 == 0 and i != 1 : 
-        #     print('-- UPLOAD TIME -- \n\n\n\n\n')
-        #     os.system('python3 pusher.py')
-        
     
         df_ = pd.Series([link, p])
         df__ = p_source.append(df_, ignore_index=True)
