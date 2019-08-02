@@ -8,6 +8,14 @@ made a dataset.
 **scrape paragraph from csv full of links**   
 `python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
 only scrapes the `<p>` tag on link that is made from csv full of links
+ **scrape csv with 2 threads alive**
+ `python scrape_this_on_steroid.py -- --interactive`
+ - create 2 variables for `main(path_to_csv)`
+ - `generate_paragraphs(variable_a, 'FILE_NAME_HERE_A')`
+ Open new window
+  `python scrape_this_on_steroid.py -- --interactive`
+ - create 2 variables for `main(path_to_csv)`
+ - `generate_paragraphs(variable_b, 'FILE_NAME_HERE_B')`
 
 
 ### updating dataset

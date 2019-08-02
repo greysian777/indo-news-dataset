@@ -1,5 +1,5 @@
 from itertools import islice
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 
 def chunk(it, size):
@@ -20,13 +20,11 @@ def generate_n_days_from_today(n_days=174):
     return [date.today() - timedelta(i) for i in range(1, n_days)]
 
 
-def generate_date_from_range(last, latest=date.today()): 
-    last = [int(x) for x in last.split('-')]
-    last = date(last[0], last[-2],last[-1])
-    delta: date = latest-last
-    print(f'updating for {delta.days} days from {last}')
-    return [latest-timedelta(i) for i in range(1,delta.days)]
-
+def generate_from_date_range(start_date, end_date):
+    # default bakal ngescrape tahun 2018
+    start = datetime.strptime(start_date, "%d-%m-%Y").date()
+    end = datetime.strptime(end_date, "%d-%m-%Y").date()
+    return [start + timedelta(days=x) for x in range(0, (end-start).days)]
 
 
 file_name = date.today().strftime("%Y-%m-%d")
