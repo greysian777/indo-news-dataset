@@ -7,7 +7,8 @@ made a dataset.
 
 **scrape paragraph from csv full of links**   
 `python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
-only scrapes the `<p>` tag on link that is made from csv full of links    
+only scrapes the `<p>` tag on link that is made from csv full of links
+
  **scrape csv with 2 threads alive**
  `python scrape_this_on_steroid.py -- --interactive`
  - create 2 variables for `main(path_to_csv)`
@@ -80,6 +81,6 @@ make sure you have already some csv to begin with.
 - [x] fix missing values in current dataset
 - [x] implement cli
 - [ ] merging stuff for csv
-- [ ] buat multithreading pecah jadi 2 buat generate p 
+- [x] buat multithreading pecah jadi 2 buat generate p 
     - jadi 1 buat 1/2 csv, 1 buat sisanya
 - [x] sanity check buat 'jeo' di `ehe.py`
