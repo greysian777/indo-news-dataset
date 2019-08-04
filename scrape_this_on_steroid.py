@@ -7,7 +7,7 @@ from pertanggalan import file_name
 import os
 import threading
 import fire
-
+import time
 
 def half_links(list_of_links):
     half = len(list_of_links)//2
