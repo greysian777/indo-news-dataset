@@ -1,3 +1,4 @@
+#!/usr/bin/env pipenv run python
 """
 WARM ON A COLD NIGHT!
 """
@@ -31,8 +32,29 @@ def generate_paragraphs(links: list, file_name=file_name):
 
         df_ = pd.Series([link, p])
         df__ = p_source.append(df_, ignore_index=True)
-        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a')
+        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a', index=False)
         print(f'done {i}/{len(links)}')
+
+def merger(csv1: pd.DataFrame, csv2: pd.DataFrame):
+    if csv1.columns == csv2.columns:
+        df = pd.concat([csv1, csv2])
+        if not df.isnull().values.any():
+            return df
+    else:
+        print('dataframe doesn\'t have the same column names.')
+        col_title = []
+        print('csv1: \n', csv1.head(5))
+        print('csv2: \n', csv2.head(5))
+        for a1, a2 in zip(csv1, csv2): 
+            if a1=='Unnamed: 0': 
+                csv1.drop([a1], axis=1, inplace=True)
+            elif a2=='Unnamed: 0':
+                csv2.drop([a2], axis=1, inplace=True)
+            col_title.append(input('title: \n'))
+        csv1.columns = col_title
+        csv2.columns = col_title
+        merger(csv1, csv2)
+        
 
 def main(path_to_csv): 
     df = pd.read_csv(path_to_csv)

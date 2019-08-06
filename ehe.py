@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from bs4 import BeautifulSoup
 from pertanggalan import generate_n_days_from_today, file_name
 import requests
@@ -168,7 +170,7 @@ def df_cleaner(path_to_csv, kasih_judul=False):
         print(f'terdapat {df.columns} sebagai judul')
         judul = [input(f'judul ke-{x}: \n>') for x in range(len(df.columns))]
         df.columns = judul
-        df.to_csv(path_to_csv)
+        df.to_csv(path_to_csv, index=False)
     df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
     return df
 #     df.to_csv(path_to_csv)
@@ -176,6 +178,7 @@ def df_cleaner(path_to_csv, kasih_judul=False):
 def main():
 
     pull_data_kompas('https://indeks.kompas.com/all/', generate_n_days_from_today(7), name=file_name)
+
 
 
 if __name__ == "__main__":

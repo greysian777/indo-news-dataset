@@ -44,8 +44,10 @@ def generate_paragraphs(path_to_csv_links, file_name=file_name):
 
         df_ = pd.Series([link, p])
         df__ = p_source.append(df_, ignore_index=True)
-        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a')
+        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a', index=False)
         print(f'done {i}/{len(links)}')
+
+
 
 
 if __name__ == "__main__":
