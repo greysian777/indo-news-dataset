@@ -80,7 +80,7 @@ make sure you have already some csv to begin with.
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
 - [x] implement cli
-- [ ] merging stuff for csv
+- [x] merging stuff for csv
 - [x] buat multithreading pecah jadi 2 buat generate p 
     - jadi 1 buat 1/2 csv, 1 buat sisanya
 - [x] sanity check buat 'jeo' di `ehe.py`
