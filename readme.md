@@ -1,7 +1,12 @@
 # kompas news scraper
 
-made a dataset. 
-## how it works 
+made a dataset.
+
+## kumpulan dataset
+[here](https://github.com/svmihar/ta-dump)
+
+
+## scraping
 **generate csv full of links for n_days from today**    
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY>`    
 
@@ -9,7 +14,7 @@ made a dataset.
 `python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
 only scrapes the `<p>` tag on link that is made from csv full of links
 
- **scrape csv with 2 threads alive**
+ **scraping with 2 threads concurrently**
  `python scrape_this_on_steroid.py -- --interactive`
  - create 2 variables for `main(path_to_csv)`
  - `generate_paragraphs(variable_a, 'FILE_NAME_HERE_A')`
@@ -21,6 +26,32 @@ only scrapes the `<p>` tag on link that is made from csv full of links
 
 ### updating dataset
 `python updater.py`
+
+
+## updating to current date
+make sure you have already some csv to begin with.
+`python updater.py`
+
+
+!TODO
+- [ ] make kelas berita OOP biar gampang buat masukkin ke dict 
+  - [ ] liat ke `ehe.py` bagian `class Berita(object):`
+- [ ] buat sumber lain juga
+  - [ ] tempo
+  - [ ] detik
+  - [ ] bisnis
+  - [ ] kontan? 
+- [x] make an updater for latest news. 
+- [x] fix missing values in current dataset
+- [x] implement cli
+- [x] merging stuff for csv
+- [x] buat multithreading pecah jadi 2 buat generate p 
+    - jadi 1 buat 1/2 csv, 1 buat sisanya
+- [ ] buat jadi ada concurrent
+- [ ] buat dask? 
+  - [ ] bikin supaya ada airflow nya
+- [x] sanity check buat 'jeo' di `ehe.py`
+
 
 skips all jeo links in kompas, few samples: 
 - [sample4](https://entertainment.kompas.com/jeo/artis-indonesia-dan-moge-sekadar-hobi-dan-gaya)
@@ -69,18 +100,3 @@ skips all jeo links in kompas, few samples:
 - [sample199](https://nasional.kompas.com/jeo/polemik-pembebasanbaasyir-antara-kemanusiaan-dan-hukum)
 - [sample200](https://nasional.kompas.com/jeo/pilpres-2019-antiklimaks-perlindungan-ham)
 - [sample201](https://nasional.kompas.com/jeo/terorisme-menurut-jokowi-maruf-dan-prabowo-sandiaga)
-
-
-## updating to current date
-make sure you have already some csv to begin with.
-`python updater.py`
-
-
-!TODO 
-- [x] make an updater for latest news. 
-- [x] fix missing values in current dataset
-- [x] implement cli
-- [x] merging stuff for csv
-- [x] buat multithreading pecah jadi 2 buat generate p 
-    - jadi 1 buat 1/2 csv, 1 buat sisanya
-- [x] sanity check buat 'jeo' di `ehe.py`
