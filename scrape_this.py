@@ -1,4 +1,4 @@
-from ehe import pull_data_kompas, pull_paragraf, file_name, df_cleaner
+from ehe import pull_link_kompas, pull_paragraf_kompas, file_name, df_cleaner
 from pertanggalan import generate_n_days_from_today, link, generate_from_date_range
 import fire
 import time
@@ -11,7 +11,7 @@ def generate_links(n_days, file_name=file_name):
     """
     list_of_dates = generate_n_days_from_today(n_days=n_days)
     print(f'generating {n_days} days worth of news')
-    pull_data_kompas(link, list_of_dates, name=file_name+'_links')
+    pull_link_kompas(link, list_of_dates, name=file_name+'_links')
 
 
 def generate_links_with_date_range(start, end, file_name=file_name):
@@ -20,7 +20,7 @@ def generate_links_with_date_range(start, end, file_name=file_name):
     """
     list_of_dates = generate_from_date_range(start, end)
     print(f'scraping {len(list_of_dates)} days')
-    pull_data_kompas(link, list_of_dates, name=file_name+'_links')
+    pull_link_kompas(link, list_of_dates, name=file_name+'_links')
 
 
 def generate_paragraphs(path_to_csv_links, file_name=file_name):
@@ -36,7 +36,7 @@ def generate_paragraphs(path_to_csv_links, file_name=file_name):
         print(f'getting par of {link}')
 
         try:
-            p = pull_paragraf(link)
+            p = pull_paragraf_kompas(link)
         except Exception as e:
             time.sleep(60)
             p = None

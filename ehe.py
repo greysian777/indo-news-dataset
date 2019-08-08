@@ -51,11 +51,17 @@ class Berita(object):
         self.berita['tanggal'] = tanggal
         return self.berita
 
-def pull_data_kontan(link, list_of_date, name, pagination=50):
+def pull_link_kontan(link, list_of_date, name, pagination=50):
+    # TODO:
+    # scrape-> judul:list, link:list, tanggal:list 
+    # bikin list of dict, yaitu judul, link, tanggal
+    # return Berita.berita(): dataframe
     pass
 
+def pull_link_tempo(link, list_of_date, name, pagination=50): 
+    pass
 
-def pull_data_kompas(link, list_of_date, name, pagination=50):
+def pull_link_kompas(link, list_of_date, name, pagination=50):
     try:
         for date_current in list_of_date:
             for j in range(1, pagination):
@@ -144,7 +150,7 @@ def pull_source(link=None):
         pass
 
 
-def pull_paragraf(link=None):
+def pull_paragraf_kompas(link=None):
     headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
     r = requests.get(link, headers=headers)
     s = BeautifulSoup(r.content, 'lxml')
@@ -188,7 +194,7 @@ def df_cleaner(path_to_csv, kasih_judul=False):
 
 
 def main():
-    pull_data_kompas('https://indeks.kompas.com/all/',
+    pull_link_kompas('https://indeks.kompas.com/all/',
                      generate_n_days_from_today(7), name=file_name)
 
 

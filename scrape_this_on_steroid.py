@@ -3,7 +3,7 @@
 WARM ON A COLD NIGHT!
 """
 import pandas as pd
-from ehe import pull_paragraf, pull_source
+from ehe import pull_paragraf_kompas, pull_source
 from pertanggalan import file_name
 import os
 import threading
@@ -24,7 +24,7 @@ def generate_paragraphs(links: list, file_name=file_name):
         print(f'getting par of {link}')
 
         try:
-            p = pull_paragraf(link)
+            p = pull_paragraf_kompas(link)
         except Exception as e:
             time.sleep(60)
             p = None

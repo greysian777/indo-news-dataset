@@ -1,4 +1,4 @@
-from ehe import pull_data_kompas, get_latest_date
+from ehe import pull_link_kompas, get_latest_date
 from pertanggalan import generate_date_from_range, link
 import pandas as pd 
 from datetime import datetime
@@ -12,7 +12,7 @@ file_name = date.today().strftime("%Y-%m-%d")
 list_of_dates_to_be_updated = generate_date_from_range(last=tanggal_terakhir)
 
 def main(): 
-    pull_data_kompas(link, list_of_dates_to_be_updated, name=file_name)
+    pull_link_kompas(link, list_of_dates_to_be_updated, name=file_name)
 
 if __name__ == "__main__":
     main()
