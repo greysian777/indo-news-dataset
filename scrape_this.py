@@ -48,8 +48,6 @@ def generate_paragraphs(path_to_csv_links, file_name=file_name):
         print(f'done {i}/{len(links)}')
 
 
-
-
 if __name__ == "__main__":
     if not os.path.exists('csv/'):
         os.makedirs('csv/')

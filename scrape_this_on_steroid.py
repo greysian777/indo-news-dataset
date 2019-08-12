@@ -6,11 +6,10 @@ import pandas as pd
 from ehe import pull_paragraf_kompas, pull_source
 from pertanggalan import file_name
 import os
-import threading
 import fire
 import time
 
-def half_links(list_of_links):
+def generate_half(list_of_links):
     half = len(list_of_links)//2
     return list_of_links[:half], list_of_links[half:]
 
@@ -59,7 +58,7 @@ def merger(csv1: pd.DataFrame, csv2: pd.DataFrame):
 def main(path_to_csv): 
     df = pd.read_csv(path_to_csv)
     df.dropna(inplace=True)
-    a,b=half_links(df.links.values)
+    a,b=generate_half(df.links.values)
     return a,b
 
 
