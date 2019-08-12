@@ -48,7 +48,9 @@ make sure you have already some csv to begin with.
 - [x] buat multithreading pecah jadi 2 buat generate p 
     - jadi 1 buat 1/2 csv, 1 buat sisanya
 - [ ] buat jadi ada concurrent
-- [ ] buat dask? 
+- [x] buat dask? 
+    - single thread: 128s
+    - dask: 43s
   - [ ] bikin supaya ada airflow nya
 - [x] sanity check buat 'jeo' di `ehe.py`
 

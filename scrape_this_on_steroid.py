@@ -13,26 +13,25 @@ def generate_half(list_of_links):
     half = len(list_of_links)//2
     return list_of_links[:half], list_of_links[half:]
 
+def generate_single_paragraph(link): 
+    return {'p':pull_paragraf_kompas(link),'link':link}
 
-def generate_paragraphs(links: list, file_name=file_name):
+def generate_paragraphs(links: list, file_name='eya'):
     """
     made a csv of paragraphs from a csv of links, where the csv must have a header of 'links'
     """
-    p_source = pd.DataFrame()
+    link = []
+    p = []
     for i, link in enumerate(links):
         print(f'getting par of {link}')
-
         try:
-            p = pull_paragraf_kompas(link)
+            p.append(pull_paragraf_kompas(link))
         except Exception as e:
-            time.sleep(60)
-            p = None
+            print(str(e))
             pass
-
-        df_ = pd.Series([link, p])
-        df__ = p_source.append(df_, ignore_index=True)
-        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a', index=False)
         print(f'done {i}/{len(links)}')
+    p_source = pd.DataFrame({'p':p, 'links':links})
+    return p_source
 
 def merger(csv1: pd.DataFrame, csv2: pd.DataFrame):
     if csv1.columns == csv2.columns:

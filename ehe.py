@@ -42,8 +42,8 @@ user_agent_list = [
 ]
 
 class Berita(object):
-    self.berita = {}
-
+    def __init__(): 
+        self.berita = {}
     def masuk_dict(self, judul, link, sumber, tanggal): 
         self.berita['judul'] = judul
         self.berita['link'] = link
@@ -125,7 +125,7 @@ def pull_link_kompas(link, list_of_date, name, pagination=50):
                         print('ada jeo')
                         pass
                     else:
-    return self.berita                        dict_['image'] = image
+                        dict_['image'] = image
                         dict_['links'] = linknya
                         dict_['date'] = date
                     df_ = pd.Series(dict_)
