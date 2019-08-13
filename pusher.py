@@ -1,4 +1,4 @@
-#!/usr/bin/env pipenv run python
+#!/usr/bin/env python
 
 import os 
 from datetime import datetime

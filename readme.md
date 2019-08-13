@@ -39,6 +39,7 @@ make sure you have already some csv to begin with.
   - [x] tempo
   - [x] detik
   - [ ] bisnis
+  - [ ] jakarta post, lastpagenya 4074
  ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
