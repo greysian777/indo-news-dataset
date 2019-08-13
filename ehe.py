@@ -54,16 +54,29 @@ class Berita(object):
         return self.berita
 
 
-def pull_link_kontan(link, list_of_date, name, pagination=50):
-    # TODO:
-    # scrape-> judul:list, link:list, tanggal:list
-    # bikin list of dict, yaitu judul, link, tanggal
-    # return Berita.berita(): dataframe
-    pass
-
-#https://news.detik.com/indeks/all/19?date=06/12/2019
-#https://news.detik.com/indeks/all/0?date=2019/08/2019
-
+def pull_link_tempo(list_of_date,file_name): 
+    #https://www.tempo.co/indeks/2019/08/13
+    if not os.path.exists('csv/'): 
+        os.makedirs('csv/')
+    list_of_df = []
+    for current_date in list_of_date: 
+        kumpulan_info = {}
+        current_date = current_date.strftime('%Y/%m/%d')
+        link = f'https://www.tempo.co/indeks/{current_date}'
+        req = requests.get(link)
+        soup = BeautifulSoup(req.content, 'lxml')
+        box = soup.find('ul',class_='wrapper')
+        list_of_links = list(set([a['href'] for a in box.find_all('a')]))
+        list_of_tanggals = [a.text for a in box.find_all('span',class_='col')]
+        list_of_judul = [a.text for a in box.find_all('h2',class_='title')]
+        kumpulan_info['links'] = list_of_links
+        kumpulan_info['judul'] = list_of_juduls
+        kumpulan_info['tanggal'] = list_of_tanggals
+        kumpulan_info['sumber'] = 'tempo'
+        list_of_df.append(kumpulan_info)
+    df = pd.DataFrame(list_of_df)
+    df.to_csv(f'csv/berhasil_{file_name}_tempo_link.csv', index=False)
+       
 
 def pull_link_detik(list_of_date, file_name='oke', pagination=50):
     # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
@@ -78,23 +91,25 @@ def pull_link_detik(list_of_date, file_name='oke', pagination=50):
                     kumpulan_info = {}
                     link = f'https://news.detik.com/indeks/all/{page_number}?date={d}/{m}/{y}'
                     print(link)
-                    header = {'User-Agent': f'{random.choice(user_agent_list)}'}
+                    header = {
+                        'User-Agent': f'{random.choice(user_agent_list)}'}
                     req = requests.get(link)
                     soup = BeautifulSoup(req.content, 'lxml')
                     box = soup.find('ul', {'id': 'indeks-container'})
                     list_of_links = [a['href'] for a in box.find_all('a')]
                     list_of_juduls = [a.text for a in box.find_all('a')]
-                    list_of_tanggal = [a.text for a in box.find_all('span') if 'wib' in a.text.lower()]
-                    kumpulan_info['links']= list_of_links
-                    kumpulan_info['judul']= list_of_juduls
-                    kumpulan_info['tanggal']= list_of_tanggal
+                    list_of_tanggals = [a.text for a in box.find_all(
+                        'span') if 'wib' in a.text.lower()]
+                    kumpulan_info['links'] = list_of_links
+                    kumpulan_info['judul'] = list_of_juduls
+                    kumpulan_info['tanggal'] = list_of_tanggals
                     kumpulan_info['sumber'] = 'detik'
                     list_of_df.append(kumpulan_info)
-                except Exception as e: 
-                    print('error',str(e))
+                except Exception as e:
+                    print('error', str(e))
     df = pd.DataFrame(list_of_df)
     df.to_csv(f'csv/berhasil_{file_name}_detik_link.csv', index=False)
-    
+
 
 def pull_link_tempo(link, list_of_date, name, pagination=50):
     pass
@@ -112,18 +127,21 @@ def pull_link_kompas(link, list_of_date, file_name, pagination=50):
             headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
             req = requests.get(url, headers=headers)
             soup = BeautifulSoup(req.content, 'lxml')
-            box = soup.find('div',class_='latest--indeks mt2 clearfix')
-            list_of_links = list(set([a['href'] for a in box.find_all('a')])) # hack for not same element erere
-            list_of_titles = [a.text for a in box.find_all('a') if len(a.text)>2]
-            list_of_tanggals = [a.text for a in box.find_all('div',class_='article__date')]
-            kumpulan_info['links']= list_of_links
-            kumpulan_info['judul']= list_of_juduls
-            kumpulan_info['tanggal']= list_of_tanggal
+            box = soup.find('div', class_='latest--indeks mt2 clearfix')
+            # hack for not same element erere
+            list_of_links = list(set([a['href'] for a in box.find_all('a')]))
+            list_of_titles = [
+                a.text for a in box.find_all('a') if len(a.text) > 2]
+            list_of_tanggals = [a.text for a in box.find_all(
+                'div', class_='article__date')]
+            kumpulan_info['links'] = list_of_links
+            kumpulan_info['judul'] = list_of_juduls
+            kumpulan_info['tanggal'] = list_of_tanggals
             kumpulan_info['sumber'] = 'detik'
             list_of_df.append(kumpulan_info)]
     df = pd.DataFrame(list_of_df)
     df.to_csv(f'csv/berhasil_{file_name}_kompas_link.csv', index=False)
-    
+
 
 def pull_source(link=None):
     if not 'jeo' in link:
@@ -180,7 +198,7 @@ def df_cleaner(path_to_csv, kasih_judul=False):
 
 def main():
     pull_link_kompas('https://indeks.kompas.com/all/',
-                     generate_n_days_from_today(7), name=file_name)
+                     generate_n_days_from_today(7), name = file_name)
 
 
 if __name__ == "__main__":
