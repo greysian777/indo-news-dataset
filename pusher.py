@@ -1,3 +1,5 @@
+#!/usr/bin/env pipenv run python
+
 import os 
 from datetime import datetime
 

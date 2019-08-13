@@ -88,6 +88,7 @@ def pull_link_detik(list_of_date, file_name='oke', pagination=50):
                     kumpulan_info['links']= list_of_links
                     kumpulan_info['judul']= list_of_juduls
                     kumpulan_info['tanggal']= list_of_tanggal
+                    kumpulan_info['sumber'] = 'detik'
                     list_of_df.append(kumpulan_info)
                 except Exception as e: 
                     print('error',str(e))
@@ -99,83 +100,30 @@ def pull_link_tempo(link, list_of_date, name, pagination=50):
     pass
 
 
-def pull_link_kompas(link, list_of_date, name, pagination=50):
-    try:
-        for date_current in list_of_date:
-            for j in range(1, pagination):
-                dict_ = {}
-                url = link + str(date_current) + '/' + str(j)
-                print(url)
-
-                # Get article from website
-                headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
-                req = requests.get(url, headers=headers)
-                soup = BeautifulSoup(req.content, 'lxml')
-
-                try:
-                    container = soup.find(
-                        'div', attrs={'class': 'latest--indeks mt2 clearfix'})
-
-                except:
-                    print('container not found')
-                    print('will sleep for 30 seconds...')
-                    time.sleep(30)
-                    continue
-
-                try:
-                    boxes = container.find_all(
-                        'div', attrs={'class': 'article__list clearfix'})
-                except:
-                    print('box not found')
-                    print('will sleep for 30 seconds...')
-                    time.sleep(30)
-                    continue
-
-                for i in range(0, len(boxes)):
-                    box = container.find_all(
-                        'div', attrs={'class': 'article__list clearfix'})[i]
-                # Get Title Article
-                    try:
-                        title = box.find('h3').text
-                    except:
-                        print('h2.text not found')
-                        break
-
-                    # Get Image
-                    try:
-                        image = box.find('img').get('src')
-                    except:
-                        print('image not found')
-                        break
-
-                    # Get URL Article
-                    try:
-                        linknya = box.find('a').get('href')
-                    except:
-                        print('href not found')
-                        break
-
-                    # Get Date
-                    date = date_current
-                    # print(title, image, url)
-
-                    if 'jeo' in linknya:
-                        print('ada jeo')
-                        pass
-                    else:
-                        dict_['image'] = image
-                        dict_['links'] = linknya
-                        dict_['date'] = date
-                    df_ = pd.Series(dict_)
-                    df1 = df.append(df_, ignore_index=True)
-                    if not os.path.exists('csv/'):
-                        os.makedirs('csv/')
-                    df1.to_csv(f'csv/berhasil_{name}.csv', mode='a')
-            print(date_current)
-        return "done"
-    except:
-        pass
-
+def pull_link_kompas(link, list_of_date, file_name, pagination=50):
+    if not os.path.exists('csv/'):
+        os.makedirs('csv/')
+    list_of_df = []
+    for date_current in list_of_date:
+        for j in range(1, pagination):
+            kumpulan_info = {}
+            url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
+            print(url)
+            headers = {'User-Agent': f'{random.choice(user_agent_list)}'}
+            req = requests.get(url, headers=headers)
+            soup = BeautifulSoup(req.content, 'lxml')
+            box = soup.find('div',class_='latest--indeks mt2 clearfix')
+            list_of_links = list(set([a['href'] for a in box.find_all('a')])) # hack for not same element erere
+            list_of_titles = [a.text for a in box.find_all('a') if len(a.text)>2]
+            list_of_tanggals = [a.text for a in box.find_all('div',class_='article__date')]
+            kumpulan_info['links']= list_of_links
+            kumpulan_info['judul']= list_of_juduls
+            kumpulan_info['tanggal']= list_of_tanggal
+            kumpulan_info['sumber'] = 'detik'
+            list_of_df.append(kumpulan_info)]
+    df = pd.DataFrame(list_of_df)
+    df.to_csv(f'csv/berhasil_{file_name}_kompas_link.csv', index=False)
+    
 
 def pull_source(link=None):
     if not 'jeo' in link:
