@@ -76,7 +76,7 @@ def pull_link_bisnis(list_of_date, file_name):
             list_of_df.append(kumpulan_info)
         df = pd.DataFrame(list_of_df)
         df.drop_duplicates(inplace=True, keep='first')
-        df.to_csv(f'csv/berhasil_{file_name}_tempo_link.csv', index=False)
+        df.to_csv(f'csv/berhasil_{file_name}_bisnis_link.csv', index=False)
     
  
 
@@ -136,9 +136,6 @@ def pull_link_detik(list_of_date, file_name='oke', pagination=50):
     df = pd.DataFrame(list_of_df)
     df.to_csv(f'csv/berhasil_{file_name}_detik_link.csv', index=False)
 
-
-def pull_link_tempo(link, list_of_date, name, pagination=50):
-    pass
 
 
 def pull_link_kompas(link, list_of_date, file_name, pagination=50):
