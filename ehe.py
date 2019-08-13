@@ -41,25 +41,63 @@ user_agent_list = [
     'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
 ]
 
+
 class Berita(object):
-    def __init__(): 
+    def __init__():
         self.berita = {}
-    def masuk_dict(self, judul, link, sumber, tanggal): 
+
+    def masuk_dict(self, judul, link, sumber, tanggal):
         self.berita['judul'] = judul
         self.berita['link'] = link
         self.berita['sumber'] = sumber
         self.berita['tanggal'] = tanggal
         return self.berita
 
+
 def pull_link_kontan(link, list_of_date, name, pagination=50):
     # TODO:
-    # scrape-> judul:list, link:list, tanggal:list 
+    # scrape-> judul:list, link:list, tanggal:list
     # bikin list of dict, yaitu judul, link, tanggal
     # return Berita.berita(): dataframe
     pass
 
-def pull_link_tempo(link, list_of_date, name, pagination=50): 
+#https://news.detik.com/indeks/all/19?date=06/12/2019
+#https://news.detik.com/indeks/all/0?date=2019/08/2019
+
+
+def pull_link_detik(list_of_date, file_name='oke', pagination=50):
+    # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
+    if not os.path.exists('csv/'):
+        os.makedirs('csv/')
+    list_of_df = []
+    for current_date in list_of_date:
+        d, m, y = current_date.strftime('%d'), current_date.strftime(
+            '%m'), current_date.strftime('%Y')
+            for page_number in range(pagination+1):
+                try:
+                    kumpulan_info = {}
+                    link = f'https://news.detik.com/indeks/all/{page_number}?date={d}/{m}/{y}'
+                    print(link)
+                    header = {'User-Agent': f'{random.choice(user_agent_list)}'}
+                    req = requests.get(link)
+                    soup = BeautifulSoup(req.content, 'lxml')
+                    box = soup.find('ul', {'id': 'indeks-container'})
+                    list_of_links = [a['href'] for a in box.find_all('a')]
+                    list_of_juduls = [a.text for a in box.find_all('a')]
+                    list_of_tanggal = [a.text for a in box.find_all('span') if 'wib' in a.text.lower()]
+                    kumpulan_info['links']= list_of_links
+                    kumpulan_info['judul']= list_of_juduls
+                    kumpulan_info['tanggal']= list_of_tanggal
+                    list_of_df.append(kumpulan_info)
+                except Exception as e: 
+                    print('error',str(e))
+    df = pd.DataFrame(list_of_df)
+    df.to_csv(f'csv/berhasil_{file_name}_detik_link.csv', index=False)
+    
+
+def pull_link_tempo(link, list_of_date, name, pagination=50):
     pass
+
 
 def pull_link_kompas(link, list_of_date, name, pagination=50):
     try:
@@ -169,7 +207,6 @@ def pull_paragraf_kompas(link=None):
 
 
 def get_latest_date(path_to_csv):
-    # assuming with the format of berhasil_2019.csv
     df = pd.read_csv(path_to_csv)
     df.dropna(inplace=True)
     return df.sort_values(by='date', ascending=False).iloc[0][-1]
@@ -196,7 +233,6 @@ def df_cleaner(path_to_csv, kasih_judul=False):
 def main():
     pull_link_kompas('https://indeks.kompas.com/all/',
                      generate_n_days_from_today(7), name=file_name)
-
 
 
 if __name__ == "__main__":

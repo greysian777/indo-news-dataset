@@ -10,6 +10,10 @@ made a dataset.
 **generate csv full of links for n_days from today**    
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY>`    
 
+**generate csv with dask** **FASTER**
+this method needs a proper dask installation [here](https://docs.dask.org/en/latest/install.html)
+`python scrape_with_dask <INSERT PATH TO CSV_P>`
+
 **scrape paragraph from csv full of links**   
 `python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
 only scrapes the `<p>` tag on link that is made from csv full of links
@@ -22,11 +26,6 @@ only scrapes the `<p>` tag on link that is made from csv full of links
   `python scrape_this_on_steroid.py -- --interactive`
  - create 2 variables for `main(path_to_csv)`
  - `generate_paragraphs(variable_b, 'FILE_NAME_HERE_B')`
-
-
-### updating dataset
-`python updater.py`
-
 
 ## updating to current date
 make sure you have already some csv to begin with.
