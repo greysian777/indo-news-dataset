@@ -36,10 +36,10 @@ make sure you have already some csv to begin with.
 - [ ] make kelas berita OOP biar gampang buat masukkin ke dict 
   - [ ] liat ke `ehe.py` bagian `class Berita(object):`
 - [ ] buat sumber lain juga
-  - [ ] tempo
-  - [ ] detik
+  - [x] tempo
+  - [x] detik
   - [ ] bisnis
-  - [ ] kontan? 
+ ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
 - [x] implement cli

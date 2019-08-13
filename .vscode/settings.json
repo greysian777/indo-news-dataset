@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/svmihar/miniconda/bin/python"
+    "python.pythonPath": "/Users/svmihar/miniconda/bin/python",
+    "python.linting.enabled": true
 }

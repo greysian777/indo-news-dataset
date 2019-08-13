@@ -54,8 +54,34 @@ class Berita(object):
         return self.berita
 
 
+def pull_link_bisnis(list_of_date, file_name):
+    # https://www.bisnis.com/index?c=&d=13+August+2019
+    if not os.path.exists('csv/'):
+        os.makedirs('csv/')
+   for current_date in list_of_date: 
+        current_date = current_date.strftime('%d+%B+%Y')
+        for j in range(pagination+1):
+            kumpulan_info = {}
+            link = f'https://www.bisnis.com/index?c=&d={current_date}&per_page={j}'
+            req = requests.get(link)
+            soup = BeautifulSoup(req.content, 'lxml')
+            box = soup.find('ul',class_='l-style-none')
+            list_of_links = [a['href'] for a in box.find_all('a')]
+            list_of_judul = [div.h2.text for div in box.find_all('div')]
+            list_of_tanggals =[div.span.text.strip() for div in box.find_all('div')]
+            kumpulan_info['links'] = list_of_links
+            kumpulan_info['judul'] = list_of_juduls
+            kumpulan_info['tanggal'] = list_of_tanggals
+            kumpulan_info['sumber'] = 'bisnis'
+            list_of_df.append(kumpulan_info)
+        df = pd.DataFrame(list_of_df)
+        df.drop_duplicates(inplace=True, keep='first')
+        df.to_csv(f'csv/berhasil_{file_name}_tempo_link.csv', index=False)
+    
+ 
+
 def pull_link_tempo(list_of_date,file_name): 
-    #https://www.tempo.co/indeks/2019/08/13
+    # https://www.tempo.co/indeks/2019/08/13
     if not os.path.exists('csv/'): 
         os.makedirs('csv/')
     list_of_df = []
