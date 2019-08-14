@@ -5,15 +5,22 @@ made a dataset.
 ## kumpulan dataset
 [here](https://github.com/svmihar/ta-dump)
 
+## how this works
+1. generates the links scraped from certain date
+2. links that are scraped saved into csv which makes `links_{source}_{date_generated}.csv`
+    - hdf5 and json are optional
+3. `links_{source}_{date_generated}.csv` will be scraped to generate the paragraph and makes `p_{source}_{date_generated}.csv`
+4. all generated csv will be saved on `csv/` folder    
+all generated csv, can be scraped single thread or concurrently.
 
 ## scraping
 **generate csv full of links for n_days from today**    
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY>`    
 
 **generate csv with dask** **FASTER**
-this method needs a proper dask installation [here](https://docs.dask.org/en/latest/install.html)
-`python scrape_with_dask <INSERT PATH TO CSV_P>`
-
+this method needs a proper dask installation [here](https://docs.dask.org/en/latest/install.html)   
+`python scrape_with_dask <INSERT PATH TO CSV_P>`   
+   
 **scrape paragraph from csv full of links**   
 `python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
 only scrapes the `<p>` tag on link that is made from csv full of links
