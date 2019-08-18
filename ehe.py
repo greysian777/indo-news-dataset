@@ -162,6 +162,8 @@ def get_latest_date(path_to_csv):
     df.dropna(inplace=True)
     return df.sort_values(by='date', ascending=False).iloc[0][-1]
 
+def remove_punctuation(kata): 
+    return kata.translate(None, string.punctuation)
 
 def df_cleaner(path_to_csv, kasih_judul=False):
     df = pd.read_csv(path_to_csv)
