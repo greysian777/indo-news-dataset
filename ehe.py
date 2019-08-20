@@ -49,7 +49,6 @@ class Paragraf():
     def pull_paragraf_tempo(self):
         pass
 
-
 def pull_link_bisnis(list_of_date, file_name=FILE_NAME):
     if not os.path.exists('csv/'):
         os.makedirs('csv/')
