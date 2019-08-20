@@ -25,26 +25,26 @@ class Paragraf():
                               'User-Agent': f'{random.choice(USER_AGENTS)}'})
         self.soup = BeautifulSoup(self.r.content, 'lxml')
 
-    def pull_paragraf_bisnis():
+    def pull_paragraf_bisnis(self):
         box = self.soup.find('div', class_='col-sm-10')
         return " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
 
-    def pull_paragraf_kompas(self, link=self.link):
-        reader = s.find('div', {'class': 'read__content'})
-           if 'MAAF KAMI TIDAK MENEMUKAN HALAMAN YANG ANDA CARI'.lower() in s.text.lower():
-                return '404'
-            elif type(reader) == type(None):
-                reader = s.find('div', {'class': 'main-artikel-paragraf'})
-                for child in reader.find_all("strong"):
-                    child.decompose()
-            elif 'jeo' in link:
-                print('jeo link')
-                return 'JEO TYPED SHIT'
-            else:
-                for child in reader.find_all("strong"):
-                    child.decompose()
+    def pull_paragraf_kompas(self, link):
+        reader = self.soup.find('div', {'class': 'read__content'})
+        if 'MAAF KAMI TIDAK MENEMUKAN HALAMAN YANG ANDA CARI'.lower() in s.text.lower():
+            return '404'
+        elif type(reader) == type(None):
+            reader = s.find('div', {'class': 'main-artikel-paragraf'})
+            for child in reader.find_all("strong"):
+                child.decompose()
+        elif 'jeo' in link:
+            print('jeo link')
+            return 'JEO TYPED SHIT'
+        else:
+            for child in reader.find_all("strong"):
+                child.decompose()
 
-            return(reader.get_text())
+        return(reader.get_text())
 
     def pull_paragraf_tempo(self):
         pass
