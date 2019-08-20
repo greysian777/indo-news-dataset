@@ -23,7 +23,7 @@ def generate_links_with_date_range(start, end, file_name=file_name):
     pull_link_kompas(link, list_of_dates, name=file_name+'_links')
 
 
-def generate_paragraphs(path_to_csv_links, file_name=file_name):
+def generate_paragraphs(path_to_csv_links, file_name=file_name, sumber):
     """
     made a csv of paragraphs from a csv of links, where the csv must have a header of 'links'
     """
