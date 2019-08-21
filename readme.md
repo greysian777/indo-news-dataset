@@ -40,13 +40,9 @@ make sure you have already some csv to begin with.
 
 
 !TODO
-- [ ] make kelas berita OOP biar gampang buat masukkin ke dict 
-  - [ ] liat ke `ehe.py` bagian `class Berita(object):`
-- [ ] buat sumber lain juga
-  - [x] tempo
   - [x] detik
-  - [ ] bisnis
-  - [ ] jakarta post, lastpagenya 4074
+  - [x] bisnis
+  - [x] jakarta post, lastpagenya 4074
  ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
@@ -60,7 +56,10 @@ make sure you have already some csv to begin with.
     - dask: 43s
   - [ ] bikin supaya ada airflow nya
 - [x] sanity check buat 'jeo' di `ehe.py`
-
+- [ ] bikin ehe supaya hanya ngepull link dan return df nya saja 
+- [ ] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
+- [ ] implement link class
+  - [x] implement pagination and fix on the generators 
 
 skips all jeo links in kompas, few samples: 
 - [sample4](https://entertainment.kompas.com/jeo/artis-indonesia-dan-moge-sekadar-hobi-dan-gaya)

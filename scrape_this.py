@@ -1,51 +1,36 @@
-from ehe import pull_link_kompas, pull_paragraf_kompas, file_name, df_cleaner
+#!/usr/bin/env pipenv run python
+
+from ehe import Link, FILE_NAME 
 from pertanggalan import generate_n_days_from_today, link, generate_from_date_range
 import fire
 import time
 import os
+import json
+import pandas as pd  
 
-
-def generate_links(n_days, file_name=file_name):
+def generate_links(n_days, sumber, file_name=FILE_NAME, save_csv=True, save_json=False):
     """
     makes a csv of links from kompas within n_days from today (date of running)
     """
     list_of_dates = generate_n_days_from_today(n_days=n_days)
     print(f'generating {n_days} days worth of news')
-    pull_link_kompas(link, list_of_dates, name=file_name+'_links')
+    puller = Link(list_of_date=list_of_dates, sumber=sumber)
+    puller = puller.run() 
+    if save_csv and save_json:
+        puller.to_csv(f'csv/{file_name}_{sumber}.csv')
+        puller.to_json(f'json/{file_name}_{sumber}.json')
+    elif save_csv:
+        puller.to_csv(f'csv/{file_name}_{sumber}.csv')
+    elif save_json: 
+        puller.to_json(f'json/{file_name}_{sumber}.json')
 
 
-def generate_links_with_date_range(start, end, file_name=file_name):
+def generate_links_with_date_range(start, end, sumber, file_name=FILE_NAME):
     """
     made a csv of links from kompas within start until end range of dates
     """
     list_of_dates = generate_from_date_range(start, end)
     print(f'scraping {len(list_of_dates)} days')
-    pull_link_kompas(link, list_of_dates, name=file_name+'_links')
-
-
-def generate_paragraphs(path_to_csv_links, file_name=file_name):
-    """
-    made a csv of paragraphs from a csv of links, where the csv must have a header of 'links'
-    """
-    import pandas as pd
-    df = pd.read_csv(path_to_csv_links)
-    df.dropna(inplace=True)
-    links = df.links
-    p_source = pd.DataFrame()
-    for i, link in enumerate(links):
-        print(f'getting par of {link}')
-
-        try:
-            p = pull_paragraf_kompas(link)
-        except Exception as e:
-            time.sleep(60)
-            p = None
-            pass
-
-        df_ = pd.Series([link, p])
-        df__ = p_source.append(df_, ignore_index=True)
-        df__.to_csv(f'csv/berhasil_{file_name}_p.csv', mode='a', index=False)
-        print(f'done {i}/{len(links)}')
 
 
 if __name__ == "__main__":
