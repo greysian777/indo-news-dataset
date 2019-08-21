@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\svmihar\\AppData\\Local\\Continuum\\miniconda3\\python.exe",
+    "python.pythonPath": "/Users/svmihar/miniconda/bin/python",
     "python.linting.enabled": true
 }

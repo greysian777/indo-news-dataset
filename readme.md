@@ -41,19 +41,20 @@ make sure you have already some csv to begin with.
 
 !TODO
 - [ ] make kelas berita OOP biar gampang buat masukkin ke dict 
-  - [x] liat ke `ehe.py` bagian `class Berita(object):`
-  - [ ] bikin `scrape_this.py` menyesuaikan dengan oop yang baru
+  - [ ] liat ke `ehe.py` bagian `class Berita(object):`
 - [ ] buat sumber lain juga
   - [x] tempo
   - [x] detik
-  - [x] bisnis
-  - [x] jakarta post, lastpagenya 4074
+  - [ ] bisnis
+  - [ ] jakarta post, lastpagenya 4074
+ ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
 - [x] implement cli
 - [x] merging stuff for csv
 - [x] buat multithreading pecah jadi 2 buat generate p 
     - jadi 1 buat 1/2 csv, 1 buat sisanya
+- [ ] buat jadi ada concurrent
 - [x] buat dask? 
     - single thread: 128s
     - dask: 43s
