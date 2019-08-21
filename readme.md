@@ -12,34 +12,22 @@ made a dataset.
 3. `links_{source}_{date_generated}.csv` will be scraped to generate the paragraph and makes `p_{source}_{date_generated}.csv`
 4. all generated csv will be saved on `csv/` folder    
 all generated csv, can be scraped single thread or concurrently.
+## sumber 
+sumber yang supported: 
+- kompas 
+- detik 
+- bisnis 
+- tempo
+
 
 ## scraping
 **generate csv full of links for n_days from today**    
-`python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY>`    
-
-**generate csv with dask** **FASTER**
-this method needs a proper dask installation [here](https://docs.dask.org/en/latest/install.html)   
-`python scrape_with_dask <INSERT PATH TO CSV_P>`   
-   
-**scrape paragraph from csv full of links**   
-`python scrape_this.py generate_paragraphs <LINK TO THE CSV>`   
-only scrapes the `<p>` tag on link that is made from csv full of links
-
- **scraping with 2 threads concurrently**
- `python scrape_this_on_steroid.py -- --interactive`
- - create 2 variables for `main(path_to_csv)`
- - `generate_paragraphs(variable_a, 'FILE_NAME_HERE_A')`
- Open new window
-  `python scrape_this_on_steroid.py -- --interactive`
- - create 2 variables for `main(path_to_csv)`
- - `generate_paragraphs(variable_b, 'FILE_NAME_HERE_B')`
-
-## updating to current date
-make sure you have already some csv to begin with.
-`python updater.py`
-
+`python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
 
 !TODO
+- [ ] implementasi `class Link` buat paragraf 
+- [ ] bikin ehe supaya hanya ngepull link dan return df nya saja 
+- [ ] unpack list biar jadi per row, bukan perhalaman per row 
   - [x] detik
   - [x] bisnis
   - [x] jakarta post, lastpagenya 4074
@@ -56,8 +44,6 @@ make sure you have already some csv to begin with.
     - dask: 43s
   - [ ] bikin supaya ada airflow nya
 - [x] sanity check buat 'jeo' di `ehe.py`
-- [ ] bikin ehe supaya hanya ngepull link dan return df nya saja 
-- [ ] unpack list biar jadi per row, bukan perhalaman per row 
 - [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
 - [x] implement link class
   - [x] implement pagination and fix on the generators 
