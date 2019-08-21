@@ -57,8 +57,9 @@ make sure you have already some csv to begin with.
   - [ ] bikin supaya ada airflow nya
 - [x] sanity check buat 'jeo' di `ehe.py`
 - [ ] bikin ehe supaya hanya ngepull link dan return df nya saja 
-- [ ] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
-- [ ] implement link class
+- [ ] unpack list biar jadi per row, bukan perhalaman per row 
+- [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
+- [x] implement link class
   - [x] implement pagination and fix on the generators 
 
 skips all jeo links in kompas, few samples: 
