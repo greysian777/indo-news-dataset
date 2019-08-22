@@ -42,8 +42,7 @@ sumber yang supported:
     - single thread: 128s
     - dask: 43s
   - [ ] bikin supaya ada airflow nya
-- [x] sanity check buat 'jeo' di `ehe.py`
-- [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
+- [x] sanity check buat 'jeo' di `ehe.py` - [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
 - [x] implement link class
   - [x] implement pagination and fix on the generators 
 

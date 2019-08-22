@@ -18,16 +18,32 @@ FILE_NAME = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
-    def __init__(self,list_of_date,sumber,pagination=50): 
+    def __init__(self, list_of_date, sumber, pagination=50):
         self.pagination = pagination
         self.list_of_date = list_of_date
         self.sumber = sumber
         if not os.path.exists('csv/') and not os.path.exists('json/'):
-            os.makedirs('csv/') 
-            os.makedirs('json/') 
+            os.makedirs('csv/')
+            os.makedirs('json/')
+
+    def masukkan_link_ke_df(self, list_of_links):
+        """ unpack list of list the returns it as a df, depends on sumber news """
+        if type(list_of_links[0]) is not 'list': 
+            print('not a list ')
+            raise ValueError
+        else: 
+            list_of_links = [l for item in list_of_links for l in item]
+        list_of_dicts = []
+        for link in list_of_links:
+            kumpulan_info = {}
+            kumpulan_info['links'] = link
+            kumpulan_info['sumber'] = self.sumber
+            list_of_dicts.append(kumpulan_info)
+        df = pd.DataFrame(list_of_dicts)
+        return df
 
     def pull_link_bisnis(self):
-        list_of_df = []
+        list_of_links = []
         for current_date in self.list_of_date:
             current_date = current_date.strftime('%d+%B+%Y')
             for j in range(self.pagination+1):
@@ -37,48 +53,35 @@ class Link():
                 req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 box = soup.find('ul', class_='l-style-none')
-                if  box.find('h2') is not None: 
+                if box.find('h2') is not None:
                     print('no more berita')
                     break
-                list_of_links = [a['href'] for a in box.find_all('a')]
-                for i in range(len(list_of_links)): 
-                    kumpulan_info['links'] = list_of_links[i]
-                    kumpulan_info['sumber'] = 'bisnis'
-                    list_of_df.append(kumpulan_info)
-            # df = pd.DataFrame(list_of_df)
-            # df.drop_duplicates(inplace=True, keep='first')
-            return list_of_df 
+                links = list(
+                    set([a['href'] for a in box.find_all('a') if len(a['href'] > 55)]))
+                list_of_links.append(links)
+        return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_tempo(self):
         # https://www.tempo.co/indeks/2019/08/13
-        list_of_df = []
+        list_of_links = []
         for current_date in self.list_of_date:
-            kumpulan_info = {}
             current_date = current_date.strftime('%Y/%m/%d')
             link = f'https://www.tempo.co/indeks/{current_date}'
             req = requests.get(link)
             soup = BeautifulSoup(req.content, 'lxml')
             box = soup.find('ul', class_='wrapper')
-            list_of_links = list(set([a['href'] for a in box.find_all('a')]))
-            list_of_tanggals = [
-                a.text for a in box.find_all('span', class_='col')]
-            list_of_judul = [
-                a.text for a in box.find_all('h2', class_='title')]
-            kumpulan_info['links'] = list_of_links
-            kumpulan_info['sumber'] = 'tempo'
-            list_of_df.append(kumpulan_info)
-        df = pd.DataFrame(list_of_df)
-        return df
+            links = list(set([a['href'] for a in box.find_all('a')]))
+            list_of_links.append(links)
+        return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_detik(self):
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
-        list_of_df = []
-        for current_date in  self.list_of_date:
+        list_of_links = []
+        for current_date in self.list_of_date:
             d, m, y = current_date.strftime('%d'), current_date.strftime(
                 '%m'), current_date.strftime('%Y')
             for page_number in range(self.pagination+1):
                 try:
-                    kumpulan_info = {}
                     link = f'https://news.detik.com/indeks/all/{page_number}?date={d}/{m}/{y}'
                     print(link)
                     header = {
@@ -86,17 +89,12 @@ class Link():
                     req = requests.get(link)
                     soup = BeautifulSoup(req.content, 'lxml')
                     box = soup.find('ul', {'id': 'indeks-container'})
-                    list_of_links = [a['href'] for a in box.find_all('a')]
-                    list_of_juduls = [a.text for a in box.find_all('a')]
-                    list_of_tanggals = [a.text for a in box.find_all(
-                        'span') if 'wib' in a.text.lower()]
-                    kumpulan_info['links'] = list_of_links
-                    kumpulan_info['sumber'] = 'detik'
-                    list_of_df.append(kumpulan_info)
+                    links = list(set([a['href'] for a in box.find_all('a')]))
+                    list_of_links.append(links)
+
                 except Exception as e:
                     print('error', str(e))
-        df = pd.DataFrame(list_of_df)
-        return df
+        return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_kompas(self):
         list_of_links = []
@@ -107,38 +105,28 @@ class Link():
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
-                if soup.find('a', class_='article__link'):  
+                if soup.find('a', class_='article__link'):
                     pass
-                else: 
+                else:
                     print('halaman terakhir')
-                    break 
+                    break
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
-                                          for a in box.find_all('a')]))
+                                  for a in box.find_all('a')]))
                 list_of_links.append(links)
-        list_of_links = [l for item in list_of_links for l in item]
-        list_of_dict = []
-        for link in list_of_links: 
-            kumpulan_info = {}
-            kumpulan_info['links']=link
-            kumpulan_info['sumber']=self.sumber
-            list_of_dict.append(kumpulan_info)
-        df = pd.DataFrame(list_of_dict)
-        return df
+        return self.masukkan_link_ke_df(list_of_dict)
 
     def run(self):
         if self.sumber.lower() == 'kompas':
-            return self.pull_link_kompas() 
-        elif self.sumber.lower() == 'detik': 
+            return self.pull_link_kompas()
+        elif self.sumber.lower() == 'detik':
             return self.pull_link_detik()
-        elif self.sumber.lower() == 'tempo': 
+        elif self.sumber.lower() == 'tempo':
             return self.pull_link_tempo
-        elif self.sumber.lower() == 'bisnis': 
+        elif self.sumber.lower() == 'bisnis':
             return self.pull_link_bisnis()
-        else: 
+        else:
             print('sumber tidak jelas, dick stuck.')
-
-
 
 
 def pull_paragraf_bisnis(link=None):
