@@ -11,6 +11,8 @@ from datetime import date
 
 
 USER_AGENTS = open('user_agent.txt').read().splitlines()
+headers = {
+    'User-Agent': f'{random.choice(USER_AGENTS)}'}
 df = pd.DataFrame()
 FILE_NAME = date.today().strftime("%Y-%m-%d")
 
@@ -24,26 +26,28 @@ class Link():
             os.makedirs('csv/') 
             os.makedirs('json/') 
 
-
     def pull_link_bisnis(self):
+        list_of_df = []
         for current_date in self.list_of_date:
             current_date = current_date.strftime('%d+%B+%Y')
             for j in range(self.pagination+1):
                 kumpulan_info = {}
                 link = f'https://www.bisnis.com/index?c=5&d={current_date}&per_page={j}'
-                req = requests.get(link)
+                print(link)
+                req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 box = soup.find('ul', class_='l-style-none')
+                if  box.find('h2') is not None: 
+                    print('no more berita')
+                    break
                 list_of_links = [a['href'] for a in box.find_all('a')]
-                list_of_judul = [div.h2.text for div in box.find_all('div')]
-                list_of_tanggals = [div.span.text.strip()
-                                    for div in box.find_all('div')]
-                kumpulan_info['links'] = list_of_links
-                kumpulan_info['sumber'] = 'bisnis'
-                list_of_df.append(kumpulan_info)
-            df = pd.DataFrame(list_of_df)
-            df.drop_duplicates(inplace=True, keep='first')
-            return df
+                for i in range(len(list_of_links)): 
+                    kumpulan_info['links'] = list_of_links[i]
+                    kumpulan_info['sumber'] = 'bisnis'
+                    list_of_df.append(kumpulan_info)
+            # df = pd.DataFrame(list_of_df)
+            # df.drop_duplicates(inplace=True, keep='first')
+            return list_of_df 
 
     def pull_link_tempo(self):
         # https://www.tempo.co/indeks/2019/08/13
@@ -95,10 +99,9 @@ class Link():
         return df
 
     def pull_link_kompas(self):
-        list_of_df = []
+        list_of_links = []
         for date_current in self.list_of_date:
             for j in range(1, self.pagination):
-                kumpulan_info = {}
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
                 print(url)
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
@@ -110,16 +113,17 @@ class Link():
                     print('halaman terakhir')
                     break 
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
-                list_of_links = list(set([a['href']
+                links = list(set([a['href']
                                           for a in box.find_all('a')]))
-                list_of_titles = [
-                    a.text for a in box.find_all('a') if len(a.text) > 2]
-                list_of_tanggals = [a.text for a in box.find_all(
-                    'div', class_='article__date')]
-                kumpulan_info['links'] = list_of_links
-                kumpulan_info['sumber'] = 'kompas'
-                list_of_df.append(kumpulan_info)
-        df = pd.DataFrame(list_of_df)
+                list_of_links.append(links)
+        list_of_links = [l for item in list_of_links for l in item]
+        list_of_dict = []
+        for link in list_of_links: 
+            kumpulan_info = {}
+            kumpulan_info['links']=link
+            kumpulan_info['sumber']=self.sumber
+            list_of_dict.append(kumpulan_info)
+        df = pd.DataFrame(list_of_dict)
         return df
 
     def run(self):

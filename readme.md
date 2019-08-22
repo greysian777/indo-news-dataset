@@ -26,8 +26,7 @@ sumber yang supported:
 
 !TODO
 - [ ] implementasi `class Link` buat paragraf 
-- [ ] bikin ehe supaya hanya ngepull link dan return df nya saja 
-- [ ] unpack list biar jadi per row, bukan perhalaman per row 
+- [ ] unpack list of dict buat bisnis 
   - [x] detik
   - [x] bisnis
   - [x] jakarta post, lastpagenya 4074
