@@ -26,7 +26,7 @@ sumber yang supported:
 
 !TODO
 - [ ] implementasi `class Link` buat paragraf 
-- [ ] unpack list of dict buat bisnis 
+- [x] unpack list of dict buat class
   - [x] detik
   - [x] bisnis
   - [x] jakarta post, lastpagenya 4074
