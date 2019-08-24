@@ -25,11 +25,11 @@ sumber yang supported:
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
 
 !TODO
-- [ ] implementasi `class Link` buat paragraf
-  - [ ] bikin puller paragraf, tanggal berita, author, judul --> string
+- [ ] implementasi `class Paragraf`
+  - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
   - [ ] bikin csv yang update per row
   - [ ] append csv_p dengan csv_link
-- [ ] buat jadi ada concurrent
+- [ ] buat jadi `class Paragraf` concurrent
 - [x] unpack list of dict buat class
   - [x] detik
   - [x] bisnis
