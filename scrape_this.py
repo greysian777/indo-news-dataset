@@ -12,8 +12,8 @@ def generate_links(n_days, sumber, file_name=FILE_NAME, save_csv=True, save_json
     """
     makes a csv of links from kompas within n_days from today (date of running)
     """
-    CSV_FILENAME = 'csv/'+file_name+f'_{sumber}_p.csv'
-    JSON_FILENAME = 'json/'+file_name+f'_{sumber}_p.json'
+    CSV_FILENAME = 'csv/'+file_name+f'_{sumber}_link.csv'
+    JSON_FILENAME = 'json/'+file_name+f'_{sumber}_link.json'
     list_of_dates = generate_n_days_from_today(n_days=n_days)
     print(f'generating {n_days} days worth of news')
     puller = Link(list_of_date=list_of_dates, sumber=sumber)

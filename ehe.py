@@ -28,17 +28,14 @@ class Link():
 
     def masukkan_link_ke_df(self, list_of_links):
         """ unpack list of list the returns it as a df, depends on sumber news """
-        if type(list_of_links[0]) is not 'list': 
-            print('not a list ')
-            raise ValueError
-        else: 
-            list_of_links = [l for item in list_of_links for l in item]
+        list_of_links = [l for item in list_of_links for l in item]
         list_of_dicts = []
         for link in list_of_links:
             kumpulan_info = {}
             kumpulan_info['links'] = link
             kumpulan_info['sumber'] = self.sumber
             list_of_dicts.append(kumpulan_info)
+        print(list_of_dicts)
         df = pd.DataFrame(list_of_dicts)
         return df
 
@@ -57,7 +54,7 @@ class Link():
                     print('no more berita')
                     break
                 links = list(
-                    set([a['href'] for a in box.find_all('a') if len(a['href'] > 55)]))
+                    set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
                 list_of_links.append(links)
         return self.masukkan_link_ke_df(list_of_links)
 
@@ -122,55 +119,111 @@ class Link():
         elif self.sumber.lower() == 'detik':
             return self.pull_link_detik()
         elif self.sumber.lower() == 'tempo':
-            return self.pull_link_tempo
+            return self.pull_link_tempo()
         elif self.sumber.lower() == 'bisnis':
             return self.pull_link_bisnis()
         else:
             print('sumber tidak jelas, dick stuck.')
 
 
-def pull_paragraf_bisnis(link=None):
-    r = requests.get(link)
-    soup = BeautifulSoup(r.content, 'lxml')
-    box = soup.find('div', class_='col-sm-10')
-    return " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
+class Paragraf:
+    def __init__(self, csv, parallel=False):
+        self.csv = csv
+        self.parallel = parallel
+        self.df = self.df_cleaner(self.csv)
 
+    def df_cleaner(self, csv=self.csv, kasih_judul=False):
+        print(f'now cleaning {self.csv}')
+        df = pd_read_csv(df)
+        if not kasih_judul:
+            df = df.drop(
+                [x for x in df.columns if 'Unnamed' in x or 'index' in x], axis=1)
+            df.to_csv(path_to_csv)
+        else:
+            df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
+            print(df.head())
+            print(f'terdapat {df.columns} sebagai judul')
+            judul = [input(f'judul ke-{x}: \n>')
+                     for x in range(len(df.columns))]
+            df.columns = judul
+            df.to_csv(path_to_csv, index=False)
+        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
+        return df
 
-def pull_paragraf_kompas(link=None):
-    headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
-    r = requests.get(link, headers=headers)
-    s = BeautifulSoup(r.content, 'lxml')
-    reader = s.find('div', {'class': 'read__content'})
-    if 'MAAF KAMI TIDAK MENEMUKAN HALAMAN YANG ANDA CARI' in s.text:
-        return '404'
-    elif type(reader) == type(None):
-        reader = s.find('div', {'class': 'main-artikel-paragraf'})
-    elif 'jeo' in link:
-        print('jeo link')
-        return 'JEO TYPED SHIT'
-    else:
-        for child in reader.find_all("strong"):
-            child.decompose()
-    return(reader.get_text())
+    def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today()):
+        template = {
+            'judul': judul,
+            'tanggal_berita': tanggal_berita,
+            'tanggal_scraped': tanggal_scraped,
+            'paragraf': paragraf
+        }
+        return template
+
+    def get_kompas(self):
+        r = requests.get(self.link, headers=headers)
+        s = BeautifulSoup(r.content, 'lxml')
+        reader = s.find('div', {'class': 'read__content'})
+        if 'maaf' in s.text.lower():
+            return None
+        elif type(reader) == type(None):
+            reader = s.find('div', {'class': 'main-artikel-paragraf'})
+        elif 'jeo' in link:
+            print('jeo link')
+            return None
+        else:
+            for child in reader.find_all("strong"):
+                child.decompose()
+            par = reader.get_text()
+        par = reader.text.strip()
+        tanggal_berita = s.find(
+            'div', class_="read__time").text.split('-')[-1].strip()
+        judul = s.find("h1").text.strip()
+        return self.berita_template(judul, tanggal_berita, par)
+
+    def get_tempo(self):
+        r = requests.get(self.link)
+        s = BeautifulSoup(r.content, 'lxml')
+        box = s.find('div', {'itemprop': 'articleBody'})
+        # get paragraf
+        paragraf = [x.text.strip() for x in box.find_all('p')]
+        # get date
+        tanggal_berita = s.find('span', class_='date').text
+        # get title
+        judul = s.find('h1', {'itemprop': headline}).text
+        # masukkin semua ke dalam dictionary
+        return self.berita_template(judul, tanggal_berita, paragraf=paragraf)
+
+    def get_detik(self):
+        """ seluruh link harus ada '/' di belakangnya."""
+        if self.link[-] is not '/':
+            print('link harus mempunyai "/" di char terakhir.\n\n\nmenambahkan...')
+            self.link = self.link + '/'
+        else:
+            pass
+
+        r = requests.get(self.link)
+        s = BeautifulSoup(r.content, 'lxml')
+        last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
+        print(f'getting {int(last_page)} pages\n\n\n')
+        kumpulan_paragraf = []
+        for i in range(2, int(last_page)+1):
+            print(f'{i} / {last_page}')
+            r = requests.get(link+f'{i}')
+            s = BeautifulSoup(r.content, 'lxml')
+            box = s.find('div', class_='itp_bodycontent detail_text')
+            par = box.find("p")
+            kumpulan_paragraf.append(par.text.strip())
+        paragraf = ' '.join(kumpulan_paragraf)
+        tanggal_berita = s.find('div', class_='date').text.strip()
+        judul = s.find('h1').text.strip()
+        return self.berita_template(judul, tanggal_berita, paragraf)
+
+    def get_bisnis(self):
+        r = requests.get(link)
+        soup = BeautifulSoup(r.content, 'lxml')
+        box = soup.find('div', class_='col-sm-10')
+        return " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
 
 
 def remove_punctuation(kata):
     return kata.translate(None, string.punctuation)
-
-
-def df_cleaner(path_to_csv, kasih_judul=False):
-    df = pd.read_csv(path_to_csv)
-    if not kasih_judul:
-        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
-
-        df.to_csv(path_to_csv)
-    else:
-        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
-
-        print(df.head())
-        print(f'terdapat {df.columns} sebagai judul')
-        judul = [input(f'judul ke-{x}: \n>') for x in range(len(df.columns))]
-        df.columns = judul
-        df.to_csv(path_to_csv, index=False)
-    df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
-    return df

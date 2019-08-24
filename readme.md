@@ -25,11 +25,17 @@ sumber yang supported:
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
 
 !TODO
-- [ ] implementasi `class Link` buat paragraf 
+- [ ] implementasi `class Link` buat paragraf
+  - [ ] bikin puller paragraf, tanggal berita, author, judul --> string
+  - [ ] bikin csv yang update per row
+  - [ ] append csv_p dengan csv_link
+- [ ] buat jadi ada concurrent
 - [x] unpack list of dict buat class
   - [x] detik
   - [x] bisnis
-  - [x] jakarta post, lastpagenya 4074
+  - [x] tempo
+  - [x] kompas
+  - [ ] jakarta post, lastpagenya 4074
  ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
@@ -37,7 +43,6 @@ sumber yang supported:
 - [x] merging stuff for csv
 - [x] buat multithreading pecah jadi 2 buat generate p 
     - jadi 1 buat 1/2 csv, 1 buat sisanya
-- [ ] buat jadi ada concurrent
 - [x] buat dask? 
     - single thread: 128s
     - dask: 43s
