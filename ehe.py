@@ -19,7 +19,7 @@ FILE_NAME = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
-    def __init__(self, list_of_date, sumber, pagination=50, txt_mode=False):
+    def __init__(self, list_of_date, sumber, pagination=50, txt_mode=True):
         self.pagination = pagination
         self.list_of_date = list_of_date
         self.sumber = sumber
@@ -27,19 +27,6 @@ class Link():
         if not os.path.exists('csv/') and not os.path.exists('json/'):
             os.makedirs('csv/')
             os.makedirs('json/')
-
-    def masukkan_link_ke_df(self, list_of_links):
-        """ unpack list of list the returns it as a df, depends on sumber news """
-        list_of_links = [l for item in list_of_links for l in item]
-        list_of_dicts = []
-        for link in list_of_links:
-            kumpulan_info = {}
-            kumpulan_info['links'] = link
-            kumpulan_info['sumber'] = self.sumber
-            list_of_dicts.append(kumpulan_info)
-        print(list_of_dicts)
-        df = pd.DataFrame(list_of_dicts)
-        return df
 
     def pull_link_bisnis(self):
         list_of_links = []
@@ -55,21 +42,13 @@ class Link():
                     break
                 links = list(
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
-                if self.txt_mode: 
-                    with open('json/detik_links.txt','a') as f : 
-                        for link in links: 
-                            # print(link)
-                            f.writelines(link+'\n')
-                    continue
-                list_of_links.append(links)
-        if self.txt_mode: 
-            print('save ke txt berhasil')
-        else: 
-            return self.masukkan_link_ke_df(list_of_links)
+                with open('json/detik_links.txt','a') as f : 
+                    for link in links: 
+                        # print(link)
+                        f.writelines(link+'\n')
+        print('save ke txt berhasil')
 
     def pull_link_tempo(self):
-        # https://www.tempo.co/indeks/2019/08/13
-        list_of_links = []
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             current_date = current_date.strftime('%Y/%m/%d')
             link = f'https://www.tempo.co/indeks/{current_date}'
@@ -78,19 +57,14 @@ class Link():
             box = soup.find('ul', class_='wrapper')
             links = list(set([a['href'] for a in box.find_all('a')]))
             list_of_links.append(links)
-            if self.txt_mode: 
-                with open('json/tempo_links.txt','a') as f : 
-                    for link in links: 
-                        # print(link)
-                        f.writelines(link+'\n')
-        if self.txt_mode: 
-            print('berhasil save txt')
-        else: 
-            return self.masukkan_link_ke_df(list_of_links)
+            with open('json/tempo_links.txt','a') as f : 
+                for link in links: 
+                    # print(link)
+                    f.writelines(link+'\n')
+        print('berhasil save txt')
 
     def pull_link_detik(self):
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
-        list_of_links = []
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
                 '%m'), current_date.strftime('%Y')
@@ -101,26 +75,17 @@ class Link():
                 req = requests.get(link)
                 soup = BeautifulSoup(req.content, 'lxml')
                 links = list(set([artikel.div.a['href'] for artikel in soup.find_all('article')]))
-                if self.txt_mode: 
-                    with open('json/detik_links.txt','a') as f : 
-                        for link in links: 
-                            # print(link)
-                            f.writelines(link+'\n')
-                    continue
-                list_of_links.append(links)
+                with open('json/detik_links.txt','a') as f : 
+                    for link in links: 
+                        f.writelines(link+'\n')
             except Exception as e:
                 print('error', str(e))
-        if self.txt_mode:
-            print('berhasil save ke txt')
-        else: 
-            return self.masukkan_link_ke_df(list_of_links)
+        print('berhasil save ke txt')
 
     def pull_link_kompas(self):
-        list_of_links = []
-        for date_current in self.list_of_date:
+        for date_current in tqdm(self.list_of_date, desc='links scraped'):
             for j in range(1, self.pagination):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
-                print(url)
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
@@ -132,15 +97,10 @@ class Link():
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
                                   for a in box.find_all('a')]))
-                if self.txt_mode: 
-                    with open('json/kompas_links.txt', 'a+') as f: 
-                        for link in links: 
-                            f.writelines(link+'\n')
-                list_of_links.append(links)
-        if self.txt_mode: 
-            print('berhasil save txt')
-        else: 
-            return self.masukkan_link_ke_df(list_of_dict)
+                with open('json/kompas_links.txt', 'a+') as f: 
+                    for link in links: 
+                        f.writelines(link+'\n')
+        print('berhasil save txt')
 
     def run(self):
         if self.sumber.lower() == 'kompas':
