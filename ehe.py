@@ -219,11 +219,14 @@ class Paragraf:
         return self.berita_template(judul, tanggal_berita, paragraf)
 
     def get_bisnis(self):
-        r = requests.get(link)
+        r = requests.get(self.link)
         soup = BeautifulSoup(r.content, 'lxml')
         box = soup.find('div', class_='col-sm-10')
-        return " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
-
+        desc = soup.find('div',class_='new-description')
+        tanggal_berita = desc.find('span').text.strip().split('|')[0]
+        judul = soup.find('h1').text.strip()
+        paragraf = " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
+        return self.berita_template(judul, tanggal_berita, paragraf)
 
 def remove_punctuation(kata):
     return kata.translate(None, string.punctuation)
