@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup
-from pertanggalan import generate_n_days_from_today
-import requests
+from datetime import date
 import pandas as pd
+from tqdm import tqdm
+import requests
 import time
 import os
 import random
-from datetime import date
+import json 
 
 
 USER_AGENTS = open('user_agent.txt').read().splitlines()
@@ -18,10 +19,11 @@ FILE_NAME = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
-    def __init__(self, list_of_date, sumber, pagination=50):
+    def __init__(self, list_of_date, sumber, pagination=50, txt_mode=False):
         self.pagination = pagination
         self.list_of_date = list_of_date
         self.sumber = sumber
+        self.txt_mode = txt_mode
         if not os.path.exists('csv/') and not os.path.exists('json/'):
             os.makedirs('csv/')
             os.makedirs('json/')
@@ -41,27 +43,34 @@ class Link():
 
     def pull_link_bisnis(self):
         list_of_links = []
-        for current_date in self.list_of_date:
+        for current_date in tqdm(self.list_of_date, desc='links scraped'):
             current_date = current_date.strftime('%d+%B+%Y')
             for j in range(self.pagination+1):
                 kumpulan_info = {}
                 link = f'https://www.bisnis.com/index?c=5&d={current_date}&per_page={j}'
-                print(link)
                 req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 box = soup.find('ul', class_='l-style-none')
                 if box.find('h2') is not None:
-                    print('no more berita')
                     break
                 links = list(
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
+                if self.txt_mode: 
+                    with open('json/detik_links.txt','a') as f : 
+                        for link in links: 
+                            # print(link)
+                            f.writelines(link+'\n')
+                    continue
                 list_of_links.append(links)
-        return self.masukkan_link_ke_df(list_of_links)
+        if self.txt_mode: 
+            print('save ke txt berhasil')
+        else: 
+            return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_tempo(self):
         # https://www.tempo.co/indeks/2019/08/13
         list_of_links = []
-        for current_date in self.list_of_date:
+        for current_date in tqdm(self.list_of_date, desc='links saved'):
             current_date = current_date.strftime('%Y/%m/%d')
             link = f'https://www.tempo.co/indeks/{current_date}'
             req = requests.get(link)
@@ -69,29 +78,42 @@ class Link():
             box = soup.find('ul', class_='wrapper')
             links = list(set([a['href'] for a in box.find_all('a')]))
             list_of_links.append(links)
-        return self.masukkan_link_ke_df(list_of_links)
+            if self.txt_mode: 
+                with open('json/tempo_links.txt','a') as f : 
+                    for link in links: 
+                        # print(link)
+                        f.writelines(link+'\n')
+        if self.txt_mode: 
+            print('berhasil save txt')
+        else: 
+            return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_detik(self):
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
         list_of_links = []
-        for current_date in self.list_of_date:
+        for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
                 '%m'), current_date.strftime('%Y')
-            for page_number in range(self.pagination+1):
-                try:
-                    link = f'https://news.detik.com/indeks/all/{page_number}?date={d}/{m}/{y}'
-                    print(link)
-                    header = {
-                        'User-Agent': f'{random.choice(USER_AGENTS)}'}
-                    req = requests.get(link)
-                    soup = BeautifulSoup(req.content, 'lxml')
-                    box = soup.find('ul', {'id': 'indeks-container'})
-                    links = list(set([a['href'] for a in box.find_all('a')]))
-                    list_of_links.append(links)
-
-                except Exception as e:
-                    print('error', str(e))
-        return self.masukkan_link_ke_df(list_of_links)
+            try:
+                link = f'https://finance.detik.com/indeks?date={d}%2F{m}%2F{y}'
+                header = {
+                    'User-Agent': f'{random.choice(USER_AGENTS)}'}
+                req = requests.get(link)
+                soup = BeautifulSoup(req.content, 'lxml')
+                links = list(set([artikel.div.a['href'] for artikel in soup.find_all('article')]))
+                if self.txt_mode: 
+                    with open('json/detik_links.txt','a') as f : 
+                        for link in links: 
+                            # print(link)
+                            f.writelines(link+'\n')
+                    continue
+                list_of_links.append(links)
+            except Exception as e:
+                print('error', str(e))
+        if self.txt_mode:
+            print('berhasil save ke txt')
+        else: 
+            return self.masukkan_link_ke_df(list_of_links)
 
     def pull_link_kompas(self):
         list_of_links = []
@@ -110,8 +132,15 @@ class Link():
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
                                   for a in box.find_all('a')]))
+                if self.txt_mode: 
+                    with open('json/kompas_links.txt', 'a+') as f: 
+                        for link in links: 
+                            f.writelines(link+'\n')
                 list_of_links.append(links)
-        return self.masukkan_link_ke_df(list_of_dict)
+        if self.txt_mode: 
+            print('berhasil save txt')
+        else: 
+            return self.masukkan_link_ke_df(list_of_dict)
 
     def run(self):
         if self.sumber.lower() == 'kompas':
@@ -131,8 +160,9 @@ class Paragraf:
         self.csv = csv
         self.parallel = parallel
         self.df = self.df_cleaner(self.csv)
+        self.sumber = csv.split('_')[-2]
 
-    def df_cleaner(self, csv=self.csv, kasih_judul=False):
+    def df_cleaner(self,kasih_judul=False):
         print(f'now cleaning {self.csv}')
         df = pd_read_csv(df)
         if not kasih_judul:
@@ -150,6 +180,32 @@ class Paragraf:
         df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
         return df
 
+    def get_links(self):
+        return list(self.df.links)
+
+    def run(self, save_to_folder): 
+        _FILE_NAME = save_to_folder+f'{FILE_NAME}_{self.sumber}_p.csv'
+        list_of_links = self.get_links()
+        print(f'get {len(list_of_links)} links')
+        save_df = pd.DataFrame(columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped' ])
+        for link in tqdm(list_of_links, desc='links scraped'): 
+            if self.sumber == 'kompas': 
+                series = pd.Series(self.get_kompas(link))
+            elif self.sumber == 'detik': 
+                series = pd.Series(self.get_detik(link))
+            elif self.sumber == 'bisnis': 
+                series = pd.Series(self.get_bisnis(link))
+            elif self.sumber == 'tempo': 
+                series = pd.Series(self.get_tempo(link))
+            else: 
+                print('sumber is not recognized, dick stuck')
+            save_df.append(series, ignore_index=True)
+            save_df.to_csv(_FILE_NAME, mode='a', header=False)
+        print(f'sukses mengambil semua paragraf di {_FILE_NAME}')
+    
+    def run_dask(self, save_to_folder): 
+        pass
+
     def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today()):
         template = {
             'judul': judul,
@@ -159,8 +215,8 @@ class Paragraf:
         }
         return template
 
-    def get_kompas(self):
-        r = requests.get(self.link, headers=headers)
+    def get_kompas(self, link: str) -> dict:
+        r = requests.get(link, headers=headers)
         s = BeautifulSoup(r.content, 'lxml')
         reader = s.find('div', {'class': 'read__content'})
         if 'maaf' in s.text.lower():
@@ -180,8 +236,8 @@ class Paragraf:
         judul = s.find("h1").text.strip()
         return self.berita_template(judul, tanggal_berita, par)
 
-    def get_tempo(self):
-        r = requests.get(self.link)
+    def get_tempo(self, link):
+        r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         box = s.find('div', {'itemprop': 'articleBody'})
         # get paragraf
@@ -193,15 +249,15 @@ class Paragraf:
         # masukkin semua ke dalam dictionary
         return self.berita_template(judul, tanggal_berita, paragraf=paragraf)
 
-    def get_detik(self):
+    def get_detik(self, link):
         """ seluruh link harus ada '/' di belakangnya."""
-        if self.link[-] is not '/':
+        if self.link[-1] is not '/':
             print('link harus mempunyai "/" di char terakhir.\n\n\nmenambahkan...')
             self.link = self.link + '/'
         else:
             pass
 
-        r = requests.get(self.link)
+        r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
         print(f'getting {int(last_page)} pages\n\n\n')
@@ -218,14 +274,15 @@ class Paragraf:
         judul = s.find('h1').text.strip()
         return self.berita_template(judul, tanggal_berita, paragraf)
 
-    def get_bisnis(self):
-        r = requests.get(self.link)
+    def get_bisnis(self,link):
+        r = requests.get(link)
         soup = BeautifulSoup(r.content, 'lxml')
         box = soup.find('div', class_='col-sm-10')
-        desc = soup.find('div',class_='new-description')
+        desc = soup.find('div', class_='new-description')
         tanggal_berita = desc.find('span').text.strip().split('|')[0]
         judul = soup.find('h1').text.strip()
-        paragraf = " ".join([p.text for p in box.find_all('p') if 'simak berita' not in p.text.lower()])
+        paragraf = " ".join([p.text for p in box.find_all(
+            'p') if 'simak berita' not in p.text.lower()])
         return self.berita_template(judul, tanggal_berita, paragraf)
 
 def remove_punctuation(kata):

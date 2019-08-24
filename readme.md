@@ -27,7 +27,8 @@ sumber yang supported:
 !TODO
 - [ ] implementasi `class Paragraf`
   - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
-  - [ ] bikin csv yang update per row
+  - [ ] list_of_links --> links -> berita_template: Dict --> list_of_berita_template -> csv
+  - bikin csv yang update per row
   - [ ] append csv_p dengan csv_link
 - [ ] buat jadi `class Paragraf` concurrent
 - [x] unpack list of dict buat class

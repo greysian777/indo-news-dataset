@@ -8,7 +8,7 @@ import os
 import json
 import pandas as pd  
 
-def generate_links(n_days, sumber, file_name=FILE_NAME, save_csv=True, save_json=False):
+def generate_links(n_days, sumber, file_name=FILE_NAME,save_csv=True, save_json=False):
     """
     makes a csv of links from kompas within n_days from today (date of running)
     """
@@ -26,6 +26,13 @@ def generate_links(n_days, sumber, file_name=FILE_NAME, save_csv=True, save_json
     elif save_json: 
         puller.to_json(JSON_FILENAME)
 
+def generate_links_txt(n_days, sumber): 
+    list_of_dates = generate_n_days_from_today(n_days=n_days)
+    puller = Link(list_of_dates, sumber=sumber, txt_mode=True)
+    puller.run()
+
+def generate_paragraph(path_to_csv, parallel=False): 
+    pass
 
 def generate_links_with_date_range(start, end, sumber, file_name=FILE_NAME):
     """
