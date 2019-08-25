@@ -1,6 +1,6 @@
 #!/usr/bin/env pipenv run python
 
-from ehe import Link, FILE_NAME 
+from ehe import Link, Paragraf, FILE_NAME 
 from pertanggalan import generate_n_days_from_today, link, generate_from_date_range
 import fire
 import time
@@ -31,9 +31,12 @@ def generate_links_txt(n_days, sumber):
     puller = Link(list_of_dates, sumber=sumber, txt_mode=True)
     puller.run()
 
-def generate_paragraph(path_to_csv, parallel=False): 
-    pass
+def generate_paragraph_from_txt(path_to_txt, parallel=False): 
+    puller = Paragraf(txt_mode=True)
+    puller.run('csv/',txt_path=path_to_txt)
 
+def generate_paragraph(): 
+    pass
 def generate_links_with_date_range(start, end, sumber, file_name=FILE_NAME):
     """
     made a csv of links from kompas within start until end range of dates

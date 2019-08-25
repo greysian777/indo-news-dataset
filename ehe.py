@@ -42,7 +42,7 @@ class Link():
                     break
                 links = list(
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
-                with open('json/detik_links.txt','a') as f : 
+                with open(f'json/{self.sumber}_links.txt','a') as f : 
                     for link in links: 
                         # print(link)
                         f.writelines(link+'\n')
@@ -51,25 +51,27 @@ class Link():
     def pull_link_tempo(self):
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             current_date = current_date.strftime('%Y/%m/%d')
-            link = f'https://www.tempo.co/indeks/{current_date}'
+            link = f'https://www.tempo.co/indeks/{current_date}/bisnis'
             req = requests.get(link)
             soup = BeautifulSoup(req.content, 'lxml')
             box = soup.find('ul', class_='wrapper')
             links = list(set([a['href'] for a in box.find_all('a')]))
-            list_of_links.append(links)
-            with open('json/tempo_links.txt','a') as f : 
+            with open(f'json/{self.sumber}_links.txt','a') as f : 
                 for link in links: 
                     # print(link)
                     f.writelines(link+'\n')
         print('berhasil save txt')
 
     def pull_link_detik(self):
+        print('rusak dari sananya. gak punya indeks yang baik dan benar ')
+        break
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
                 '%m'), current_date.strftime('%Y')
             try:
                 link = f'https://finance.detik.com/indeks?date={d}%2F{m}%2F{y}'
+                print(link)
                 header = {
                     'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(link)
@@ -86,13 +88,13 @@ class Link():
         for date_current in tqdm(self.list_of_date, desc='links scraped'):
             for j in range(1, self.pagination):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
+                print(url)
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 if soup.find('a', class_='article__link'):
                     pass
                 else:
-                    print('halaman terakhir')
                     break
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
@@ -101,12 +103,30 @@ class Link():
                     for link in links: 
                         f.writelines(link+'\n')
         print('berhasil save txt')
+        
+
+    def pull_link_kompas_finansial(self): 
+        for j in tqdm(range(1, 9), desc='scraped'):
+            url = f'https://www.kompas.com/tag/finansial/desc/{j}'
+            headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
+            req = requests.get(url, headers=headers)
+            soup = BeautifulSoup(req.content, 'lxml')
+            box = soup.find('div', class_='latest--topic mt2 clearfix')
+            links = list(set([a['href']
+                                for a in box.find_all('a')]))
+            with open('json/kompas_finansial_links.txt', 'a+') as f: 
+                for link in links: 
+                    f.writelines(link+'\n')
+        print('berhasil save txt')
 
     def run(self):
         if self.sumber.lower() == 'kompas':
             return self.pull_link_kompas()
         elif self.sumber.lower() == 'detik':
+            break
             return self.pull_link_detik()
+        elif self.sumber.lower() == 'kompas_finansial':
+            return self.pull_link_kompas_finansial()
         elif self.sumber.lower() == 'tempo':
             return self.pull_link_tempo()
         elif self.sumber.lower() == 'bisnis':
@@ -116,11 +136,16 @@ class Link():
 
 
 class Paragraf:
-    def __init__(self, csv, parallel=False):
+    def __init__(self, csv=None, txt_mode=False, parallel=False):
         self.csv = csv
         self.parallel = parallel
-        self.df = self.df_cleaner(self.csv)
-        self.sumber = csv.split('_')[-2]
+        if csv is None:
+            print('initializing txt mode...')
+            self.sumber = 'kompas_finansial' 
+        else:
+            self.df = self.df_cleaner(self.csv)
+            self.sumber = csv.split('_')[-2]
+        self.txt_mode = txt_mode
 
     def df_cleaner(self,kasih_judul=False):
         print(f'now cleaning {self.csv}')
@@ -143,24 +168,38 @@ class Paragraf:
     def get_links(self):
         return list(self.df.links)
 
-    def run(self, save_to_folder): 
+    def run(self, save_to_folder, txt_path=None): 
+        if self.txt_mode: 
+            list_of_links = open(txt_path).read().splitlines()
+            self.sumber = txt_path.split('.')[0].split('/')[-1].split('_')[0]
+            print(self.sumber)
+        else:
+            list_of_links = self.get_links()
         _FILE_NAME = save_to_folder+f'{FILE_NAME}_{self.sumber}_p.csv'
-        list_of_links = self.get_links()
         print(f'get {len(list_of_links)} links')
         save_df = pd.DataFrame(columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped' ])
-        for link in tqdm(list_of_links, desc='links scraped'): 
-            if self.sumber == 'kompas': 
-                series = pd.Series(self.get_kompas(link))
-            elif self.sumber == 'detik': 
-                series = pd.Series(self.get_detik(link))
-            elif self.sumber == 'bisnis': 
-                series = pd.Series(self.get_bisnis(link))
-            elif self.sumber == 'tempo': 
-                series = pd.Series(self.get_tempo(link))
-            else: 
-                print('sumber is not recognized, dick stuck')
-            save_df.append(series, ignore_index=True)
-            save_df.to_csv(_FILE_NAME, mode='a', header=False)
+        for link in tqdm(list_of_links, desc='links scraped'):
+            try: 
+                if self.sumber == 'kompas' or self.sumber == 'kompas_finansial': 
+                    series = pd.Series(self.get_kompas(link))
+                elif self.sumber == 'detik': 
+                    print('DETIK TIDAK MASUK')
+                    break
+                    series = pd.Series(self.get_detik(link))
+                elif self.sumber == 'bisnis': 
+                    series = pd.Series(self.get_bisnis(link))
+                elif self.sumber == 'tempo': 
+                    series = pd.Series(self.get_tempo(link))
+                else: 
+                    print('sumber is not recognized, dick stuck')
+                    os._exit()
+                save_df = save_df.append(series, ignore_index=True)
+                save_df.to_csv(_FILE_NAME, mode='a', header=False)
+            except Exception as e : 
+                print(f'error on link {link}')
+                print(str(e))
+                continue
+        save_df.to_csv(_FILE_NAME)
         print(f'sukses mengambil semua paragraf di {_FILE_NAME}')
     
     def run_dask(self, save_to_folder): 
@@ -205,30 +244,31 @@ class Paragraf:
         # get date
         tanggal_berita = s.find('span', class_='date').text
         # get title
-        judul = s.find('h1', {'itemprop': headline}).text
+        judul = s.find('h1', {'itemprop': 'headline'}).text
         # masukkin semua ke dalam dictionary
         return self.berita_template(judul, tanggal_berita, paragraf=paragraf)
 
     def get_detik(self, link):
-        """ seluruh link harus ada '/' di belakangnya."""
-        if self.link[-1] is not '/':
-            print('link harus mempunyai "/" di char terakhir.\n\n\nmenambahkan...')
-            self.link = self.link + '/'
-        else:
-            pass
-
+        print('DETIK TIDAK MASUK')
+        break
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
-        last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
-        print(f'getting {int(last_page)} pages\n\n\n')
         kumpulan_paragraf = []
-        for i in range(2, int(last_page)+1):
-            print(f'{i} / {last_page}')
-            r = requests.get(link+f'{i}')
+        last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
+        if type(last_page) is 'NoneType':
+            r = requests.get(link)
             s = BeautifulSoup(r.content, 'lxml')
             box = s.find('div', class_='itp_bodycontent detail_text')
-            par = box.find("p")
-            kumpulan_paragraf.append(par.text.strip())
+            kumpulan_paragraf.append(box.text)
+        else:
+            print(f'getting {int(last_page)} pages\n\n\n')
+            for i in range(2, int(last_page)+1):
+                print(f'{i} / {last_page}')
+                r = requests.get(link+f'{i}')
+                s = BeautifulSoup(r.content, 'lxml')
+                box = s.find('div', class_='itp_bodycontent detail_text')
+                par = box.find("p")
+                kumpulan_paragraf.append(par.text.strip())
         paragraf = ' '.join(kumpulan_paragraf)
         tanggal_berita = s.find('div', class_='date').text.strip()
         judul = s.find('h1').text.strip()

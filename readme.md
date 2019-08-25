@@ -15,7 +15,7 @@ all generated csv, can be scraped single thread or concurrently.
 ## sumber 
 sumber yang supported: 
 - kompas 
-- detik 
+~~- detik ~~
 - bisnis 
 - tempo
 
