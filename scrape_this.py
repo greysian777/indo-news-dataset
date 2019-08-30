@@ -35,8 +35,6 @@ def generate_paragraph_from_txt(path_to_txt, parallel=False):
     puller = Paragraf(txt_mode=True)
     puller.run('csv/',txt_path=path_to_txt)
 
-def generate_paragraph(): 
-    pass
 def generate_links_with_date_range(start, end, sumber, file_name=FILE_NAME):
     """
     made a csv of links from kompas within start until end range of dates
