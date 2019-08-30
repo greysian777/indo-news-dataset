@@ -32,8 +32,11 @@ def generate_links_txt(n_days, sumber):
     puller.run()
 
 def generate_paragraph_from_txt(path_to_txt, parallel=False): 
+    start = time.time()
     puller = Paragraf(txt_mode=True)
     puller.run('csv/',txt_path=path_to_txt)
+    print(f'time spent: {time.time() - start}')
+
 
 def generate_links_with_date_range(start, end, sumber, file_name=FILE_NAME):
     """

@@ -64,7 +64,6 @@ class Link():
 
     def pull_link_detik(self):
         print('rusak dari sananya. gak punya indeks yang baik dan benar ')
-        break
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
@@ -123,7 +122,6 @@ class Link():
         if self.sumber.lower() == 'kompas':
             return self.pull_link_kompas()
         elif self.sumber.lower() == 'detik':
-            break
             return self.pull_link_detik()
         elif self.sumber.lower() == 'kompas_finansial':
             return self.pull_link_kompas_finansial()
@@ -136,34 +134,11 @@ class Link():
 
 
 class Paragraf:
-    def __init__(self, csv=None, txt_mode=False, parallel=False):
+    def __init__(self, csv=None, txt_mode=True, parallel=False):
         self.csv = csv
         self.parallel = parallel
-        if csv is None:
-            print('initializing txt mode...')
-            self.sumber = 'kompas_finansial' 
-        else:
-            self.df = self.df_cleaner(self.csv)
-            self.sumber = csv.split('_')[-2]
-        self.txt_mode = txt_mode
+        self.txt_mode =txt_mode
 
-    def df_cleaner(self,kasih_judul=False):
-        print(f'now cleaning {self.csv}')
-        df = pd_read_csv(df)
-        if not kasih_judul:
-            df = df.drop(
-                [x for x in df.columns if 'Unnamed' in x or 'index' in x], axis=1)
-            df.to_csv(path_to_csv)
-        else:
-            df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
-            print(df.head())
-            print(f'terdapat {df.columns} sebagai judul')
-            judul = [input(f'judul ke-{x}: \n>')
-                     for x in range(len(df.columns))]
-            df.columns = judul
-            df.to_csv(path_to_csv, index=False)
-        df = df.drop([x for x in df.columns if 'Unnamed' in x], axis=1)
-        return df
 
     def get_links(self):
         return list(self.df.links)
@@ -174,7 +149,8 @@ class Paragraf:
             self.sumber = txt_path.split('.')[0].split('/')[-1].split('_')[0]
             print(self.sumber)
         else:
-            list_of_links = self.get_links()
+            print('you need to specify the list of links') 
+
         _FILE_NAME = save_to_folder+f'{FILE_NAME}_{self.sumber}_p.csv'
         print(f'get {len(list_of_links)} links')
         save_df = pd.DataFrame(columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped' ])
@@ -222,14 +198,12 @@ class Paragraf:
             return None
         elif type(reader) == type(None):
             reader = s.find('div', {'class': 'main-artikel-paragraf'})
+            par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
         elif 'jeo' in link:
             print('jeo link')
-            return None
+            par = None
         else:
-            for child in reader.find_all("strong"):
-                child.decompose()
-            par = reader.get_text()
-        par = reader.text.strip()
+            par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
         tanggal_berita = s.find(
             'div', class_="read__time").text.split('-')[-1].strip()
         judul = s.find("h1").text.strip()
@@ -239,18 +213,13 @@ class Paragraf:
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         box = s.find('div', {'itemprop': 'articleBody'})
-        # get paragraf
         paragraf = [x.text.strip() for x in box.find_all('p')]
-        # get date
         tanggal_berita = s.find('span', class_='date').text
-        # get title
         judul = s.find('h1', {'itemprop': 'headline'}).text
-        # masukkin semua ke dalam dictionary
-        return self.berita_template(judul, tanggal_berita, paragraf=paragraf)
+        return self.berita_template(judul, tanggal_berita, paragraf)
 
     def get_detik(self, link):
         print('DETIK TIDAK MASUK')
-        break
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         kumpulan_paragraf = []
