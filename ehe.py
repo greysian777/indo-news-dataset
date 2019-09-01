@@ -14,13 +14,12 @@ import json
 USER_AGENTS = open('user_agent.txt').read().splitlines()
 headers = {
     'User-Agent': f'{random.choice(USER_AGENTS)}'}
-df = pd.DataFrame()
 FILE_NAME = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
     def __init__(self, list_of_date, sumber, pagination=50, txt_mode=True):
-        self.pagination = pagination
+        self.pagination = pagination+1
         self.list_of_date = list_of_date
         self.sumber = sumber
         self.txt_mode = txt_mode
@@ -84,10 +83,9 @@ class Link():
         print('berhasil save ke txt')
 
     def pull_link_kompas(self):
-        for date_current in tqdm(self.list_of_date, desc='links scraped'):
-            for j in range(1, self.pagination):
+        for date_current in self.list_of_date: 
+            for j in tqdm(range(1, self.pagination), desc='page'):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
-                print(url)
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
@@ -98,7 +96,7 @@ class Link():
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
                                   for a in box.find_all('a')]))
-                with open('json/kompas_links.txt', 'a+') as f: 
+                with open(f'json/{FILE_NAME}_kompas_links.txt', 'a+') as f: 
                     for link in links: 
                         f.writelines(link+'\n')
         print('berhasil save txt')
@@ -194,19 +192,25 @@ class Paragraf:
         r = requests.get(link, headers=headers)
         s = BeautifulSoup(r.content, 'lxml')
         reader = s.find('div', {'class': 'read__content'})
-        if 'maaf' in s.text.lower():
+        time.sleep(random.randint(1,3))
+        try:
+            if 'maaf' in s.text.lower():
+                return None
+            elif type(reader) == type(None):
+                reader = s.find('div', {'class': 'main-artikel-paragraf'})
+                par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
+            elif 'jeo' in link:
+                print('jeo link')
+                par = None
+            else:
+                par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
+            tanggal_berita = s.find(
+                'div', class_="read__time").text.split('-')[-1].strip()
+            judul = s.find("h1").text.strip()
+        except Exception as e: 
+            print(str(e))
+            print(link)
             return None
-        elif type(reader) == type(None):
-            reader = s.find('div', {'class': 'main-artikel-paragraf'})
-            par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
-        elif 'jeo' in link:
-            print('jeo link')
-            par = None
-        else:
-            par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
-        tanggal_berita = s.find(
-            'div', class_="read__time").text.split('-')[-1].strip()
-        judul = s.find("h1").text.strip()
         return self.berita_template(judul, tanggal_berita, par)
 
     def get_tempo(self, link):
