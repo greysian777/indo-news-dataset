@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\svmihar\\Downloads\\tian\\indo-news-dataset\\.venv\\Scripts\\python.exe",
+    "python.pythonPath": "/usr/local/bin/python",
     "python.linting.enabled": true
 }

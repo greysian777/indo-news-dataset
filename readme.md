@@ -26,7 +26,7 @@ sumber yang supported:
 
 !TODO
 - [ ] perbaiki daskifier method 
-- [ ] buat proses multiprocessing
+- [x] buat proses multiprocessing
 - [ ] hapus fitur save link ke df untuk semua `class Link`
 - [ ] implementasi `class Paragraf`
   - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
