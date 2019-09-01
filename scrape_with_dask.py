@@ -1,5 +1,4 @@
 import dask
-from typing import List, Dict
 import pandas as pd
 import dask.dataframe as ddf
 from ehe import USER_AGENTS as user_agent_list
