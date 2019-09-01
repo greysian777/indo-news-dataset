@@ -3,49 +3,29 @@
 from ehe import Paragraf
 from multiprocessing import Pool
 import json 
+from tqdm import tqdm
 import time 
-import dask
+import json
 
+def main(txt_path, n_jobs = 7): 
+    berita = Paragraf()
+    links = open(txt_path).read().splitlines()
+    links = list(set(links))
+    print('getting ',len(links))
+    sumber = txt_path.split('_')[1]
+    print(sumber)
 
-kompas_links = open('json/kompas_links.txt').read().splitlines()
-print(f'ada {len(kompas_links)} link')
+    with Pool(n_jobs) as p :
+        try: 
+            hasil = list(tqdm(p.imap(berita.get_kompas, links), total=len(links)))
+        except: 
+            pass
+        finally: 
+            p.terminate()
+            p.join()
+            with open('csv/dump_kompas_parallel_hasil.json', "a+") as f: 
+                json.dump(hasil, f,indent=4, sort_keys=True, default=str)
+
 
 if __name__ == "__main__":
-    start = time.time()
-    kompas = Paragraf()
-# parallel
-    print('starting multi process')
-    p = Pool(20)
-    hasil = p.map(kompas.get_kompas, kompas_links)
-    p.terminate()
-    p.join()
-    print(f'berhasil scraping dalam waktu {time.time() - start}')
-
-    start = time.time()
-    with open('json/dump_kompas_parallel_hasil.json', "a+") as f: 
-        json.dump(hasil, f,indent=4, sort_keys=True, default=str)
-    print(f'berhasil dumps dalam waktu {time.time() - start}')
-
-# using dask 
-    print("starting dask")
-    start = time.time()
-    data = [dask.delayed(kompas.get_tempo)(link) for link in kompas_links]
-    data = dask.compute(data)
-    print(f'berhasil scraping pake dask dalam waktu {time.time() - start}')
-    start = time.time()
-    with open('json/dump_kompas_dask_hasil.json', "a+") as f: 
-        json.dump(data, f,indent=4, sort_keys=True, default=str)
-    print(f'berhasil dumps dalam waktu {time.time() - start}')
-    
-
-# single
-    print('starting 1 thread process')
-    data = []
-    start = time.time()
-    for link in kompas_links: 
-        data.append(kompas.get_tempo(link))
-    with open('json/dumps_kompas_serial_hasil.json', "a+") as f: 
-        json.dump(hasil,f , indent=4, sort_keys=True, default=str)
-    print(f'berhasil dump dalam waktu {time.time() - start}')
-
-    
+        main('json/2019-09-01_kompas_links.txt')

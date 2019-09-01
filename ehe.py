@@ -95,7 +95,7 @@ class Link():
                     break
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
-                                  for a in box.find_all('a')]))
+                                  for a in box.find_all('a') if 'travel' not in a['href']]))
                 with open(f'json/{FILE_NAME}_kompas_links.txt', 'a+') as f: 
                     for link in links: 
                         f.writelines(link+'\n')
@@ -179,12 +179,13 @@ class Paragraf:
     def run_dask(self, save_to_folder): 
         pass
 
-    def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today()):
+    def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today(), link=None):
         template = {
             'judul': judul,
             'tanggal_berita': tanggal_berita,
             'tanggal_scraped': tanggal_scraped,
-            'paragraf': paragraf
+            'paragraf': paragraf,
+            'link':link
         }
         return template
 
@@ -192,16 +193,15 @@ class Paragraf:
         r = requests.get(link, headers=headers)
         s = BeautifulSoup(r.content, 'lxml')
         reader = s.find('div', {'class': 'read__content'})
-        time.sleep(random.randint(1,3))
         try:
             if 'maaf' in s.text.lower():
                 return None
             elif type(reader) == type(None):
                 reader = s.find('div', {'class': 'main-artikel-paragraf'})
                 par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
-            elif 'jeo' in link:
+            elif 'jeo' in link.split('/'):
                 print('jeo link')
-                par = None
+                return None
             else:
                 par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
             tanggal_berita = s.find(
@@ -211,7 +211,7 @@ class Paragraf:
             print(str(e))
             print(link)
             return None
-        return self.berita_template(judul, tanggal_berita, par)
+        return self.berita_template(judul, tanggal_berita, par, link=link)
 
     def get_tempo(self, link):
         r = requests.get(link)
