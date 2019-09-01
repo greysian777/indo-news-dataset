@@ -27,6 +27,7 @@ sumber yang supported:
 !TODO
 - [ ] perbaiki daskifier method 
 - [x] buat proses multiprocessing
+    - [ ] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
 - [ ] hapus fitur save link ke df untuk semua `class Link`
 - [ ] implementasi `class Paragraf`
   - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
