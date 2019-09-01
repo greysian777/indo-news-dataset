@@ -6,26 +6,35 @@ import json
 from tqdm import tqdm
 import time 
 import json
+import fire
 
-def main(txt_path, n_jobs = 7): 
+
+def pembagi(l, n): 
+    for i in range(0, len(l), n): 
+        yield l[i:i+n]
+
+
+def main(list_of_links,name, n_jobs = 7): 
     berita = Paragraf()
-    links = open(txt_path).read().splitlines()
-    links = list(set(links))
-    print('getting ',len(links))
-    sumber = txt_path.split('_')[1]
-    print(sumber)
+    print('getting ',len(list_of_links))
 
     with Pool(n_jobs) as p :
         try: 
-            hasil = list(tqdm(p.imap(berita.get_kompas, links), total=len(links)))
-        except: 
-            pass
+            hasil = list(tqdm(p.imap(berita.get_kompas, list_of_links), total=len(list_of_links)))
+        except Exception as e: 
+            print(str(e))
         finally: 
             p.terminate()
             p.join()
-            with open('csv/dump_kompas_parallel_hasil.json', "a+") as f: 
+            with open(f'csv/{name}___dump_kompas_parallel_hasil.json', "a+") as f: 
                 json.dump(hasil, f,indent=4, sort_keys=True, default=str)
 
 
 if __name__ == "__main__":
-        main('json/2019-09-01_kompas_links.txt')
+    kompas = open('json/kompas_sisa.txt').read().splitlines()
+    kl = list(pembagi(kompas, 700))
+    for j in kl: 
+        print(len(j))
+    for i,link in enumerate(kl): 
+        print(f'part {i}')
+        main(link, i)
