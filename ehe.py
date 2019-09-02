@@ -8,7 +8,7 @@ import requests
 import time
 import os
 import random
-import json 
+import json
 
 
 USER_AGENTS = open('user_agent.txt').read().splitlines()
@@ -41,8 +41,8 @@ class Link():
                     break
                 links = list(
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
-                with open(f'json/{self.sumber}_links.txt','a') as f : 
-                    for link in links: 
+                with open(f'json/{self.sumber}_links.txt', 'a') as f:
+                    for link in links:
                         # print(link)
                         f.writelines(link+'\n')
         print('save ke txt berhasil')
@@ -55,8 +55,8 @@ class Link():
             soup = BeautifulSoup(req.content, 'lxml')
             box = soup.find('ul', class_='wrapper')
             links = list(set([a['href'] for a in box.find_all('a')]))
-            with open(f'json/{self.sumber}_links.txt','a') as f : 
-                for link in links: 
+            with open(f'json/{self.sumber}_links.txt', 'a') as f:
+                for link in links:
                     # print(link)
                     f.writelines(link+'\n')
         print('berhasil save txt')
@@ -74,16 +74,17 @@ class Link():
                     'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(link)
                 soup = BeautifulSoup(req.content, 'lxml')
-                links = list(set([artikel.div.a['href'] for artikel in soup.find_all('article')]))
-                with open('json/detik_links.txt','a') as f : 
-                    for link in links: 
+                links = list(set([artikel.div.a['href']
+                                  for artikel in soup.find_all('article')]))
+                with open('json/detik_links.txt', 'a') as f:
+                    for link in links:
                         f.writelines(link+'\n')
             except Exception as e:
                 print('error', str(e))
         print('berhasil save ke txt')
 
     def pull_link_kompas(self):
-        for date_current in self.list_of_date: 
+        for date_current in self.list_of_date:
             for j in tqdm(range(1, self.pagination), desc='page'):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
@@ -96,13 +97,12 @@ class Link():
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
                                   for a in box.find_all('a') if 'travel' not in a['href']]))
-                with open(f'json/{FILE_NAME}_kompas_links.txt', 'a+') as f: 
-                    for link in links: 
+                with open(f'json/{FILE_NAME}_kompas_links.txt', 'a+') as f:
+                    for link in links:
                         f.writelines(link+'\n')
         print('berhasil save txt')
-        
 
-    def pull_link_kompas_finansial(self): 
+    def pull_link_kompas_finansial(self):
         for j in tqdm(range(1, 9), desc='scraped'):
             url = f'https://www.kompas.com/tag/finansial/desc/{j}'
             headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
@@ -110,9 +110,9 @@ class Link():
             soup = BeautifulSoup(req.content, 'lxml')
             box = soup.find('div', class_='latest--topic mt2 clearfix')
             links = list(set([a['href']
-                                for a in box.find_all('a')]))
-            with open('json/kompas_finansial_links.txt', 'a+') as f: 
-                for link in links: 
+                              for a in box.find_all('a')]))
+            with open('json/kompas_finansial_links.txt', 'a+') as f:
+                for link in links:
                     f.writelines(link+'\n')
         print('berhasil save txt')
 
@@ -135,49 +135,46 @@ class Paragraf:
     def __init__(self, csv=None, txt_mode=True, parallel=False):
         self.csv = csv
         self.parallel = parallel
-        self.txt_mode =txt_mode
-
+        self.txt_mode = txt_mode
 
     def get_links(self):
         return list(self.df.links)
 
-    def run(self, save_to_folder, txt_path=None): 
-        if self.txt_mode: 
+    def run(self, save_to_folder, txt_path=None):
+        if self.txt_mode:
             list_of_links = open(txt_path).read().splitlines()
             self.sumber = txt_path.split('.')[0].split('/')[-1].split('_')[0]
             print(self.sumber)
         else:
-            print('you need to specify the list of links') 
+            print('you need to specify the list of links')
 
         _FILE_NAME = save_to_folder+f'{FILE_NAME}_{self.sumber}_p.csv'
         print(f'get {len(list_of_links)} links')
-        save_df = pd.DataFrame(columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped' ])
+        save_df = pd.DataFrame(
+            columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped'])
         for link in tqdm(list_of_links, desc='links scraped'):
-            try: 
-                if self.sumber == 'kompas' or self.sumber == 'kompas_finansial': 
+            try:
+                if self.sumber == 'kompas' or self.sumber == 'kompas_finansial':
                     series = pd.Series(self.get_kompas(link))
-                elif self.sumber == 'detik': 
+                elif self.sumber == 'detik':
                     print('DETIK TIDAK MASUK')
                     break
                     series = pd.Series(self.get_detik(link))
-                elif self.sumber == 'bisnis': 
+                elif self.sumber == 'bisnis':
                     series = pd.Series(self.get_bisnis(link))
-                elif self.sumber == 'tempo': 
+                elif self.sumber == 'tempo':
                     series = pd.Series(self.get_tempo(link))
-                else: 
+                else:
                     print('sumber is not recognized, dick stuck')
                     os._exit()
                 save_df = save_df.append(series, ignore_index=True)
                 save_df.to_csv(_FILE_NAME, mode='a', header=False)
-            except Exception as e : 
+            except Exception as e:
                 print(f'error on link {link}')
                 print(str(e))
                 continue
         save_df.to_csv(_FILE_NAME)
         print(f'sukses mengambil semua paragraf di {_FILE_NAME}')
-    
-    def run_dask(self, save_to_folder): 
-        pass
 
     def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today(), link=None):
         template = {
@@ -185,7 +182,7 @@ class Paragraf:
             'tanggal_berita': tanggal_berita,
             'tanggal_scraped': tanggal_scraped,
             'paragraf': paragraf,
-            'link':link
+            'link': link
         }
         return template
 
@@ -198,16 +195,18 @@ class Paragraf:
                 return None
             elif type(reader) == type(None):
                 reader = s.find('div', {'class': 'main-artikel-paragraf'})
-                par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
+                par = ' '.join([p.text for p in reader.find_all(
+                    'p') if 'Baca juga' not in p.text])
             elif 'jeo' in link.split('/'):
                 print('jeo link')
                 return None
             else:
-                par = ' '.join([p.text for p in reader.find_all('p') if 'Baca juga' not in p.text])
+                par = ' '.join([p.text for p in reader.find_all(
+                    'p') if 'Baca juga' not in p.text])
             tanggal_berita = s.find(
                 'div', class_="read__time").text.split('-')[-1].strip()
             judul = s.find("h1").text.strip()
-        except Exception as e: 
+        except Exception as e:
             print(str(e))
             print(link)
             return None
@@ -247,7 +246,7 @@ class Paragraf:
         judul = s.find('h1').text.strip()
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
-    def get_bisnis(self,link):
+    def get_bisnis(self, link):
         r = requests.get(link)
         soup = BeautifulSoup(r.content, 'lxml')
         box = soup.find('div', class_='col-sm-10')
@@ -257,6 +256,7 @@ class Paragraf:
         paragraf = " ".join([p.text for p in box.find_all(
             'p') if 'simak berita' not in p.text.lower()])
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
+
 
 def remove_punctuation(kata):
     return kata.translate(None, string.punctuation)

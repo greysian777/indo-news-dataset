@@ -34,22 +34,18 @@ def main(list_of_links,sumber, n_jobs =25):
             json.dump(hasil, f,indent=4, sort_keys=True, default=str)
 
 def run(sumber, path_to_txt, chunks=100):
-    if sumber == path_to_txt.split('_')[0].split('/')[-1]:
-        print('sumber dan txt tidak sama ')
-        raise ValueError
-
-    if sumber == 'kompas':
-        berita = open(path_to_txt).read().splitlines()
-        berita_c = list(pembagi(berita), chunks)
-        for i, link in enumerate(berita_c):
-            file_name=f'{i}_{sumber}'
-            try:
-                print(f'part {i}/{len(kl)}')
-                time.sleep(random.randint(5,29))
-                main(link, file_name)
-            except:
-                time.sleep(random.randint(10,60))
-                continue
+    berita = open(path_to_txt).read().splitlines()
+    berita_c = list(pembagi(berita, chunks))
+    for i, link in enumerate(berita_c):
+        file_name=f'{i}_{sumber}'
+        try:
+            print(f'part {i}/{len(kl)}')
+            time.sleep(random.randint(5,29))
+            main(link, file_name)
+        except Exception as e:
+            print(str(e))
+            time.sleep(random.randint(10,60))
+            continue
 
 
 if __name__ == "__main__":
