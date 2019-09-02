@@ -222,13 +222,14 @@ class Paragraf:
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         kumpulan_paragraf = []
-        last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
-        if type(last_page) is 'NoneType':
+        try:
+            last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
+        except AttributeError as e:
             r = requests.get(link)
             s = BeautifulSoup(r.content, 'lxml')
             box = s.find('div', class_='itp_bodycontent detail_text')
             kumpulan_paragraf.append(box.text)
-        else:
+        except:
             print(f'getting {int(last_page)} pages\n\n\n')
             for i in range(2, int(last_page)+1):
                 print(f'{i} / {last_page}')
