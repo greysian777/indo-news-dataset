@@ -62,7 +62,6 @@ class Link():
         print('berhasil save txt')
 
     def pull_link_detik(self):
-        print('rusak dari sananya. gak punya indeks yang baik dan benar ')
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
@@ -157,8 +156,6 @@ class Paragraf:
                 if self.sumber == 'kompas' or self.sumber == 'kompas_finansial':
                     series = pd.Series(self.get_kompas(link))
                 elif self.sumber == 'detik':
-                    print('DETIK TIDAK MASUK')
-                    break
                     series = pd.Series(self.get_detik(link))
                 elif self.sumber == 'bisnis':
                     series = pd.Series(self.get_bisnis(link))
@@ -222,7 +219,6 @@ class Paragraf:
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
     def get_detik(self, link):
-        print('DETIK TIDAK MASUK')
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         kumpulan_paragraf = []
