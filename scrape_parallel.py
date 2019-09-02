@@ -15,7 +15,7 @@ def pembagi(l, n):
         yield l[i:i+n]
 
 
-def main(list_of_links,sumber, n_jobs =25):
+def main(list_of_links,sumber, nama_file, n_jobs =25):
     berita = Paragraf()
     print('getting ',len(list_of_links))
 
@@ -25,13 +25,17 @@ def main(list_of_links,sumber, n_jobs =25):
         elif sumber == 'detik':
             hasil = list(tqdm(p.imap(berita.get_detik, list_of_links), total=len(list_of_links)))
         elif sumber == 'tempo':
-            print('Getting tempo')
             hasil = list(tqdm(p.imap(berita.get_tempo, list_of_links), total=len(list_of_links)))
         elif sumber == 'bisnis':
             hasil = list(tqdm(p.imap(berita.get_bisnis, list_of_links), total=len(list_of_links)))
+        else:
+            print('sumber belum ditentukan')
+            raise ValueError
+
+
         p.terminate()
         p.join()
-        with open(f'csv/{sumber}___dump_parallel_hasil.json', "a+") as f:
+        with open(f'csv/{nama_file}___dump_parallel_hasil.json', "a+") as f:
             json.dump(hasil, f,indent=4, sort_keys=True, default=str)
 
 def run(sumber, path_to_txt, chunks=100):
@@ -42,7 +46,7 @@ def run(sumber, path_to_txt, chunks=100):
         try:
             print(f'part {i}/{len(berita_c)}')
             time.sleep(random.randint(5,29))
-            main(link, file_name)
+            main(link, sumber=sumber ,nama_file=file_name)
         except Exception as e:
             print(str(e))
             time.sleep(random.randint(10,60))
