@@ -220,7 +220,7 @@ class Paragraf:
         paragraf = [x.text.strip() for x in box.find_all('p')]
         tanggal_berita = s.find('span', class_='date').text
         judul = s.find('h1', {'itemprop': 'headline'}).text
-        return self.berita_template(judul, tanggal_berita, paragraf)
+        return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
     def get_detik(self, link):
         print('DETIK TIDAK MASUK')
@@ -245,7 +245,7 @@ class Paragraf:
         paragraf = ' '.join(kumpulan_paragraf)
         tanggal_berita = s.find('div', class_='date').text.strip()
         judul = s.find('h1').text.strip()
-        return self.berita_template(judul, tanggal_berita, paragraf)
+        return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
     def get_bisnis(self,link):
         r = requests.get(link)
@@ -256,7 +256,7 @@ class Paragraf:
         judul = soup.find('h1').text.strip()
         paragraf = " ".join([p.text for p in box.find_all(
             'p') if 'simak berita' not in p.text.lower()])
-        return self.berita_template(judul, tanggal_berita, paragraf)
+        return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
 def remove_punctuation(kata):
     return kata.translate(None, string.punctuation)
