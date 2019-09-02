@@ -25,6 +25,7 @@ def main(list_of_links,sumber, n_jobs =25):
         elif sumber == 'detik':
             hasil = list(tqdm(p.imap(berita.get_detik, list_of_links), total=len(list_of_links)))
         elif sumber == 'tempo':
+            print('Getting tempo')
             hasil = list(tqdm(p.imap(berita.get_tempo, list_of_links), total=len(list_of_links)))
         elif sumber == 'bisnis':
             hasil = list(tqdm(p.imap(berita.get_bisnis, list_of_links), total=len(list_of_links)))
@@ -39,7 +40,7 @@ def run(sumber, path_to_txt, chunks=100):
     for i, link in enumerate(berita_c):
         file_name=f'{i}_{sumber}'
         try:
-            print(f'part {i}/{len(kl)}')
+            print(f'part {i}/{len(berita_c)}')
             time.sleep(random.randint(5,29))
             main(link, file_name)
         except Exception as e:
