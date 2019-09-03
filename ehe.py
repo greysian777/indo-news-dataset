@@ -2,6 +2,8 @@
 
 from bs4 import BeautifulSoup
 from datetime import date
+from typing import List, Dict, Text
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import requests
@@ -11,23 +13,23 @@ import random
 import json
 
 
-USER_AGENTS = open('user_agent.txt').read().splitlines()
+USER_AGENTS: List[Text] = open('user_agent.txt').read().splitlines()
 headers = {
     'User-Agent': f'{random.choice(USER_AGENTS)}'}
-FILE_NAME = date.today().strftime("%Y-%m-%d")
+FILE_NAME: Text = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
-    def __init__(self, list_of_date, sumber, pagination=50, txt_mode=True):
+    def __init__(self, list_of_date: List[Text], sumber: Text, pagination=50, txt_mode=True):
         self.pagination = pagination+1
-        self.list_of_date = list_of_date
+        self.list_of_date = np.asarray(list_of_date)
         self.sumber = sumber
         self.txt_mode = txt_mode
         if not os.path.exists('csv/') and not os.path.exists('json/'):
             os.makedirs('csv/')
             os.makedirs('json/')
 
-    def pull_link_bisnis(self):
+    def pull_link_bisnis(self) -> None:
         list_of_links = []
         for current_date in tqdm(self.list_of_date, desc='links scraped'):
             current_date = current_date.strftime('%d+%B+%Y')
@@ -47,7 +49,7 @@ class Link():
                         f.writelines(link+'\n')
         print('save ke txt berhasil')
 
-    def pull_link_tempo(self):
+    def pull_link_tempo(self) -> None:
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             current_date = current_date.strftime('%Y/%m/%d')
             link = f'https://www.tempo.co/indeks/{current_date}/bisnis'
@@ -61,7 +63,7 @@ class Link():
                     f.writelines(link+'\n')
         print('berhasil save txt')
 
-    def pull_link_detik(self):
+    def pull_link_detik(self) -> None:
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
@@ -82,7 +84,7 @@ class Link():
                 print('error', str(e))
         print('berhasil save ke txt')
 
-    def pull_link_kompas(self):
+    def pull_link_kompas(self) -> None:
         for date_current in self.list_of_date:
             for j in tqdm(range(1, self.pagination), desc='page'):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
@@ -140,6 +142,7 @@ class Paragraf:
         return list(self.df.links)
 
     def run(self, save_to_folder, txt_path=None):
+        """ single threading scraping paragraphs of a txt full of links """
         if self.txt_mode:
             list_of_links = open(txt_path).read().splitlines()
             self.sumber = txt_path.split('.')[0].split('/')[-1].split('_')[0]
@@ -173,7 +176,8 @@ class Paragraf:
         save_df.to_csv(_FILE_NAME)
         print(f'sukses mengambil semua paragraf di {_FILE_NAME}')
 
-    def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today(), link=None):
+    def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today(), link=None) -> Dict:
+        """ dictionary template for berita """
         template = {
             'judul': judul,
             'tanggal_berita': tanggal_berita,
@@ -183,7 +187,8 @@ class Paragraf:
         }
         return template
 
-    def get_kompas(self, link: str) -> dict:
+    def get_kompas(self, link: Text) -> Dict:
+        """ returns a dictionary of kompas news """
         r = requests.get(link, headers=headers)
         s = BeautifulSoup(r.content, 'lxml')
         reader = s.find('div', {'class': 'read__content'})
@@ -209,16 +214,18 @@ class Paragraf:
             return None
         return self.berita_template(judul, tanggal_berita, par, link=link)
 
-    def get_tempo(self, link):
+    def get_tempo(self, link: Text) -> Dict:
+        """ returns a dictionary of tempo article """
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         box = s.find('div', {'itemprop': 'articleBody'})
         paragraf = [x.text.strip() for x in box.find_all('p')]
-        tanggal_berita = s.find('span', {'itemprop':'datePublished'}).text
+        tanggal_berita = s.find('span', {'itemprop': 'datePublished'}).text
         judul = s.find('h1', {'itemprop': 'headline'}).text
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
     def get_detik(self, link):
+        """ returns a dictionary of detik article """
         r = requests.get(link)
         s = BeautifulSoup(r.content, 'lxml')
         kumpulan_paragraf = []
@@ -243,7 +250,8 @@ class Paragraf:
         judul = s.find('h1').text.strip()
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 
-    def get_bisnis(self, link):
+    def get_bisnis(self, link: Text) -> Dict:
+        """ returns a dictionary of bisnis article """
         r = requests.get(link)
         soup = BeautifulSoup(r.content, 'lxml')
         box = soup.find('div', class_='col-sm-10')
@@ -253,7 +261,3 @@ class Paragraf:
         paragraf = " ".join([p.text for p in box.find_all(
             'p') if 'simak berita' not in p.text.lower()])
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
-
-
-def remove_punctuation(kata):
-    return kata.translate(None, string.punctuation)
