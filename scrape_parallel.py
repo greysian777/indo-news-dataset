@@ -4,6 +4,7 @@ from ehe import Paragraf
 from multiprocessing import Pool
 from tqdm import tqdm
 import numpy as np
+import os
 import time
 import json
 from glob import glob
