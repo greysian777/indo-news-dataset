@@ -25,16 +25,15 @@ sumber yang supported:
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
 
 !TODO
-- [ ] perbaiki daskifier method 
+- [ ] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
 - [x] buat proses multiprocessing
-    - [ ] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
-- [ ] hapus fitur save link ke df untuk semua `class Link`
-- [ ] implementasi `class Paragraf`
+    - [x] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
+- [x] hapus fitur save link ke df untuk semua `class Link`
+- [x] implementasi `class Paragraf`
   - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
   - [x] list_of_links --> links -> berita_template: Dict --> list_of_berita_template -> csv
   - [x] bikin csv yang update per row
   - [ ] append csv_p dengan csv_link
-- [ ] buat jadi `class Paragraf` concurrent
 - [x] unpack list of dict buat class
   - [x] detik
   - [x] bisnis

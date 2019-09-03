@@ -6,6 +6,7 @@ import json
 from tqdm import tqdm
 import time
 import json
+from glob import glob
 import fire
 import random
 
@@ -54,6 +55,33 @@ def run(sumber, path_to_txt, chunks=100):
             print(str(e))
             time.sleep(random.randint(10,60))
             continue
+    print('finished\n\n\n\n')
+    print('now aggregating json files')
+    json_aggregator(sumber)
+
+
+def json_aggregator(sumber): 
+    json_path = f'csv/{sumber}/*__*.json'
+    berita_json = glob(json_path)
+
+    berita = []
+    for file in berita_json: 
+        try: 
+            with open(file) as f: 
+                berita.append(json.load(f))
+        except Exception as e: 
+            print(str(e)) 
+            pass
+
+    # check if path available
+    if not os.path.exists(f'hasil/{sumber}'): 
+        os.makedirs(f'hasil/{sumber}')
+    berita = [sub for i in berita for sub in i]
+    with open(f'hasil/{sumber}.json','w+') as f: 
+        json.dump(berita, f, indent=4, sort_keys=True, default=str)
+
+    for berita in berita_json: 
+        os.remove(berita)
 
 
 if __name__ == "__main__":
