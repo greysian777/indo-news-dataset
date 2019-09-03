@@ -20,8 +20,8 @@ def pembagi(l, n):
 def main(list_of_links, sumber, nama_file, n_jobs=25):
     if not os.path.exists(f'csv/{sumber}'):
         os.makedirs(f'csv/{sumber}')
-
-    list_of_links = np.asarray(list_of_links)
+    list_of_links = [l for l in list_of_links if 'money' not in l]
+    list_of_links = np.asarray([l for l in list_of_links if 'lifestyle' not in l])
     berita = Paragraf()
     print('getting ', len(list_of_links))
     with Pool(n_jobs) as p:
