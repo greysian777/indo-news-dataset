@@ -74,7 +74,7 @@ class Link():
                 req = requests.get(link)
                 soup = BeautifulSoup(req.content, 'lxml')
                 links = list(set([artikel.div.a['href']
-                                  for artikel in soup.find_all('article')]))
+                                  for artikel in soup.find_all('article') if 'foto-bisnis' not in artikel.div.a['href']]))
                 with open('json/detik_links.txt', 'a') as f:
                     for link in links:
                         f.writelines(link+'\n')
