@@ -214,7 +214,7 @@ class Paragraf:
         s = BeautifulSoup(r.content, 'lxml')
         box = s.find('div', {'itemprop': 'articleBody'})
         paragraf = [x.text.strip() for x in box.find_all('p')]
-        tanggal_berita = s.find('span', class_='date').text
+        tanggal_berita = s.find('span', {'itemprop':'datePublished'}).text
         judul = s.find('h1', {'itemprop': 'headline'}).text
         return self.berita_template(judul, tanggal_berita, paragraf, link=link)
 

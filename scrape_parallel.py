@@ -16,6 +16,9 @@ def pembagi(l, n):
 
 
 def main(list_of_links,sumber, nama_file, n_jobs =25):
+    if not os.path.exists(f'csv/{sumber}'): 
+        os.makedirs(f'csv/{sumber}')
+
     berita = Paragraf()
     print('getting ',len(list_of_links))
 
@@ -35,7 +38,7 @@ def main(list_of_links,sumber, nama_file, n_jobs =25):
 
         p.terminate()
         p.join()
-        with open(f'csv/{nama_file}___dump_parallel_hasil.json', "a+") as f:
+        with open(f'csv/{sumber}/{nama_file}___dump_parallel_hasil.json', "a+") as f:
             json.dump(hasil, f,indent=4, sort_keys=True, default=str)
 
 def run(sumber, path_to_txt, chunks=100):
