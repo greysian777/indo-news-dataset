@@ -55,14 +55,10 @@ def run(sumber, path_to_txt, chunks=100):
         list(pembagi(open(path_to_txt).read().splitlines(), chunks)))
     for i, link in enumerate(berita_c):
         file_name = f'{i}_{sumber}'
-        try:
-            print(f'part {i}/{len(berita_c)}')
-            time.sleep(random.randint(5, 29))
-            main(link, sumber=sumber, nama_file=file_name)
-        except Exception as e:
-            print(str(e))
-            time.sleep(random.randint(10, 60))
-            continue
+        print(f'part {i}/{len(berita_c)}')
+        time.sleep(random.randint(5, 29))
+        main(link, sumber=sumber, nama_file=file_name)
+        time.sleep(random.randint(10, 60))
     print('finished\n\n\n\n')
     print('now aggregating json files')
     json_aggregator(sumber)

@@ -25,7 +25,8 @@ sumber yang supported:
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
 
 !TODO
-- [ ] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
+- [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
+- [ ] fix detik finance news for better non paging and pagination news
 - [x] buat proses multiprocessing
     - [x] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
 - [x] hapus fitur save link ke df untuk semua `class Link`
