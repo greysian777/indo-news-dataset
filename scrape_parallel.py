@@ -65,6 +65,9 @@ def run(sumber, path_to_txt, chunks=100):
 
 
 def json_aggregator(sumber):
+    """
+    aggregate a list of json files inside a directory
+     """
     json_path = f'csv/{sumber}/*__*.json'
     berita_json = glob(json_path)
 

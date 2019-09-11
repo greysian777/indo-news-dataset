@@ -30,11 +30,9 @@ class Link():
             os.makedirs('json/')
 
     def pull_link_bisnis(self) -> None:
-        list_of_links = []
         for current_date in tqdm(self.list_of_date, desc='links scraped'):
             current_date = current_date.strftime('%d+%B+%Y')
             for j in range(self.pagination+1):
-                kumpulan_info = {}
                 link = f'https://www.bisnis.com/index?c=5&d={current_date}&per_page={j}'
                 req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
@@ -138,8 +136,6 @@ class Paragraf:
         self.parallel = parallel
         self.txt_mode = txt_mode
 
-    def get_links(self):
-        return list(self.df.links)
 
     def run(self, save_to_folder, txt_path=None):
         """ single threading scraping paragraphs of a txt full of links """
@@ -231,7 +227,7 @@ class Paragraf:
         kumpulan_paragraf = []
         try:
             last_page = s.find('div', class_='mid_multi').text.split('/')[-1]
-        except AttributeError as e:
+        except AttributeError:
             r = requests.get(link)
             s = BeautifulSoup(r.content, 'lxml')
             box = s.find('div', class_='itp_bodycontent detail_text')
