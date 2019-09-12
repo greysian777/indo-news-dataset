@@ -13,7 +13,6 @@ requests = "*"
 pandas = "*"
 fire = "*"
 jupyter = "*"
-dask = "*"
 tqdm = "*"
 
 [requires]

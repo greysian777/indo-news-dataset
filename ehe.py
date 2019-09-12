@@ -10,7 +10,6 @@ import requests
 import time
 import os
 import random
-import json
 
 
 USER_AGENTS: List[Text] = open('user_agent.txt').read().splitlines()
@@ -25,9 +24,9 @@ class Link():
         self.list_of_date = np.asarray(list_of_date)
         self.sumber = sumber
         self.txt_mode = txt_mode
-        if not os.path.exists('csv/') and not os.path.exists('json/'):
-            os.makedirs('csv/')
-            os.makedirs('json/')
+        if not os.path.exists('hasil/') and not os.path.exists('links/'):
+            os.makedirs('hasil/')
+            os.makedirs('links/')
 
     def pull_link_bisnis(self) -> None:
         for current_date in tqdm(self.list_of_date, desc='links scraped'):
@@ -41,7 +40,7 @@ class Link():
                     break
                 links = list(
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
-                with open(f'json/{self.sumber}_links.txt', 'a') as f:
+                with open(f'links/{self.sumber}_links.txt', 'a') as f:
                     for link in links:
                         # print(link)
                         f.writelines(link+'\n')
@@ -55,7 +54,7 @@ class Link():
             soup = BeautifulSoup(req.content, 'lxml')
             box = soup.find('ul', class_='wrapper')
             links = list(set([a['href'] for a in box.find_all('a')]))
-            with open(f'json/{self.sumber}_links.txt', 'a') as f:
+            with open(f'links/{self.sumber}_links.txt', 'a') as f:
                 for link in links:
                     # print(link)
                     f.writelines(link+'\n')
@@ -69,13 +68,11 @@ class Link():
             try:
                 link = f'https://finance.detik.com/indeks?date={d}%2F{m}%2F{y}'
                 print(link)
-                header = {
-                    'User-Agent': f'{random.choice(USER_AGENTS)}'}
-                req = requests.get(link)
+                req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 links = list(set([artikel.div.a['href']
                                   for artikel in soup.find_all('article') if 'foto-bisnis' not in artikel.div.a['href']]))
-                with open('json/detik_links.txt', 'a') as f:
+                with open('links/detik_links.txt', 'a') as f:
                     for link in links:
                         f.writelines(link+'\n')
             except Exception as e:
@@ -96,23 +93,9 @@ class Link():
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
                 links = list(set([a['href']
                                   for a in box.find_all('a') if 'travel' not in a['href']]))
-                with open(f'json/{FILE_NAME}_kompas_links.txt', 'a+') as f:
+                with open(f'links/{FILE_NAME}_kompas_links.txt', 'a+') as f:
                     for link in links:
                         f.writelines(link+'\n')
-        print('berhasil save txt')
-
-    def pull_link_kompas_finansial(self):
-        for j in tqdm(range(1, 9), desc='scraped'):
-            url = f'https://www.kompas.com/tag/finansial/desc/{j}'
-            headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
-            req = requests.get(url, headers=headers)
-            soup = BeautifulSoup(req.content, 'lxml')
-            box = soup.find('div', class_='latest--topic mt2 clearfix')
-            links = list(set([a['href']
-                              for a in box.find_all('a')]))
-            with open('json/kompas_finansial_links.txt', 'a+') as f:
-                for link in links:
-                    f.writelines(link+'\n')
         print('berhasil save txt')
 
     def run(self):
@@ -120,8 +103,6 @@ class Link():
             return self.pull_link_kompas()
         elif self.sumber.lower() == 'detik':
             return self.pull_link_detik()
-        elif self.sumber.lower() == 'kompas_finansial':
-            return self.pull_link_kompas_finansial()
         elif self.sumber.lower() == 'tempo':
             return self.pull_link_tempo()
         elif self.sumber.lower() == 'bisnis':
@@ -135,7 +116,6 @@ class Paragraf:
         self.csv = csv
         self.parallel = parallel
         self.txt_mode = txt_mode
-
 
     def run(self, save_to_folder, txt_path=None):
         """ single threading scraping paragraphs of a txt full of links """
