@@ -18,8 +18,8 @@ def pembagi(l, n):
 
 
 def main(list_of_links, sumber, nama_file, n_jobs=25):
-    if not os.path.exists(f'csv/{sumber}'):
-        os.makedirs(f'csv/{sumber}')
+    if not os.path.exists(f'hasil/{sumber}'):
+        os.makedirs(f'hasil/{sumber}')
     list_of_links = [l for l in list_of_links if 'money' not in l]
     list_of_links = np.asarray([l for l in list_of_links if 'lifestyle' not in l])
     berita = Paragraf()
@@ -43,7 +43,7 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
 
         p.terminate()
         p.join()
-        with open(f'csv/{sumber}/{nama_file}___dump_parallel_hasil.json', "a+") as f:
+        with open(f'hasil/{sumber}/{nama_file}___dump_parallel_hasil.json', "a+") as f:
             json.dump(hasil, f, indent=4, sort_keys=True, default=str)
 
 
@@ -68,7 +68,7 @@ def json_aggregator(sumber):
     """
     aggregate a list of json files inside a directory
      """
-    json_path = f'csv/{sumber}/*__*.json'
+    json_path = f'hasil/{sumber}/*__*.json'
     berita_json = glob(json_path)
 
     berita = []

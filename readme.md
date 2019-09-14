@@ -26,7 +26,6 @@ sumber yang supported:
 
 !TODO
 - [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
-- [ ] fix detik finance news for better non paging and pagination news
 - [x] buat proses multiprocessing
     - [x] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
 - [x] hapus fitur save link ke df untuk semua `class Link`
@@ -34,14 +33,11 @@ sumber yang supported:
   - [x] bikin puller paragraf, tanggal berita, author, judul --> dictionary
   - [x] list_of_links --> links -> berita_template: Dict --> list_of_berita_template -> csv
   - [x] bikin csv yang update per row
-  - [ ] append csv_p dengan csv_link
 - [x] unpack list of dict buat class
   - [x] detik
   - [x] bisnis
   - [x] tempo
   - [x] kompas
-  - [ ] jakarta post, lastpagenya 4074
- ~~ - [ ] kontan? ~~
 - [x] make an updater for latest news. 
 - [x] fix missing values in current dataset
 - [x] implement cli
