@@ -6,12 +6,9 @@ made a dataset.
 [here](https://github.com/svmihar/ta-dump)
 
 ## how this works
-1. generates the links scraped from certain date
-2. links that are scraped saved into csv which makes `links_{source}_{date_generated}.csv`
-    - hdf5 and json are optional
-3. `links_{source}_{date_generated}.csv` will be scraped to generate the paragraph and makes `p_{source}_{date_generated}.csv`
-4. all generated csv will be saved on `csv/` folder    
-all generated csv, can be scraped single thread or concurrently.
+1. generates the links to txt,  scraped from a certain date, sourced from index news site
+2. the generated links will be scraped, in which will be saved to a single json files, which contains paragraphs, date of news, date of scraping and link. 
+3. profit 
 ## sumber 
 sumber yang supported: 
 - kompas 
@@ -23,6 +20,8 @@ sumber yang supported:
 ## scraping
 **generate csv full of links for n_days from today**    
 `python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
+**scraping with multiprocessing**    
+`python scrape_parallel.py <SUMBER> <PATH_TO_LINK_TXT> <N_DAYS>`    
 
 !TODO
 - [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
