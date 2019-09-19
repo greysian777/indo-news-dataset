@@ -7,23 +7,25 @@ made a dataset.
 
 ## how this works
 1. generates the links to txt,  scraped from a certain date, sourced from index news site
-2. the generated links will be scraped, in which will be saved to a single json files, which contains paragraphs, date of news, date of scraping and link. 
-3. profit 
-## sumber 
-sumber yang supported: 
-- kompas 
+2. the generated links will be scraped, in which will be saved to a single json files, which contains paragraphs, date of news, date of scraping and link.
+3. profit
+## sumber
+sumber yang supported:
+- kompas
 ~~- detik ~~
-- bisnis 
+- bisnis
 - tempo
 
 
 ## scraping
-**generate csv full of links for n_days from today**    
-`python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`    
-**scraping with multiprocessing**    
-`python scrape_parallel.py <SUMBER> <PATH_TO_LINK_TXT> <N_DAYS>`    
+**generate csv full of links for n_days from today**
+`python scrape_this.py generate_links <N_DAYS_TO_SCRAPE_FROM_TODAY> <SUMBER>`
+**scraping with multiprocessing**
+`python scrape_parallel.py <SUMBER> <PATH_TO_LINK_TXT> <N_DAYS>`
 
 !TODO
+- [ ] connect to mongodb!
+- [ ] make migration to mongodb stuff in azure
 - [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
 - [x] buat proses multiprocessing
     - [x] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat
@@ -37,21 +39,21 @@ sumber yang supported:
   - [x] bisnis
   - [x] tempo
   - [x] kompas
-- [x] make an updater for latest news. 
+- [x] make an updater for latest news.
 - [x] fix missing values in current dataset
 - [x] implement cli
 - [x] merging stuff for csv
-- [x] buat multithreading pecah jadi 2 buat generate p 
+- [x] buat multithreading pecah jadi 2 buat generate p
     - jadi 1 buat 1/2 csv, 1 buat sisanya
-- [x] buat dask? 
+- [x] buat dask?
     - single thread: 128s
     - dask: 43s
   - [ ] bikin supaya ada airflow nya
-- [x] sanity check buat 'jeo' di `ehe.py` - [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya 
+- [x] sanity check buat 'jeo' di `ehe.py` - [x] bikin scrape biar punya parameter untuk save ke csv atau json atau semuanya
 - [x] implement link class
-  - [x] implement pagination and fix on the generators 
+  - [x] implement pagination and fix on the generators
 
-skips all jeo links in kompas, few samples: 
+skips all jeo links in kompas, few samples:
 - [sample4](https://entertainment.kompas.com/jeo/artis-indonesia-dan-moge-sekadar-hobi-dan-gaya)
 - [sample9](https://entertainment.kompas.com/jeo/cerita-artis-indonesia-dan-moge-tunggangannya)
 - [sample12](https://travel.kompas.com/jeo/riwayat-sambal-nusantara)
