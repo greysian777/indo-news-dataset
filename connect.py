@@ -3,22 +3,28 @@
 from pymongo import MongoClient
 import json
 from fire import Fire
-from typing import List, Set, Dict, Tuple, Optional
+from typing import List, Set, Dict, Tuple, Optional, NewType
+
+
+# custom type hints
+Client = NewType('client', MongoClient)
 
 client = MongoClient()
-# db = client['news']
-
 # check if db exist
-def check_if_db_exist(name:str) -> bool: 
-    pass
+def check_if_db_exist(name:str) -> Client:
+    if 'news' in client.list_database_names():
+        return client['news']
+    else:
+        return client.news
+
+
 # choose what json to insert
 # profit
-j
 
-def fill_json(): 
+def fill_json():
     pass
 
-def fill_single(): 
+def fill_single():
     pass
 
 def main(json_file):
