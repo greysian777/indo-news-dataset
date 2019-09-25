@@ -3,20 +3,28 @@
 from pymongo import MongoClient
 import json
 from fire import Fire
+from typing import List, Set, Dict, Tuple, Optional
 
-client = MongoClient('localhost',2707)
-db = client['news']
-collection_currency = db['currency']
+client = MongoClient()
+# db = client['news']
 
 # check if db exist
+def check_if_db_exist(name:str) -> bool: 
+    pass
 # choose what json to insert
 # profit
+j
 
+def fill_json(): 
+    pass
+
+def fill_single(): 
+    pass
 
 def main(json_file):
     with open(json_file) as f:
         file_data = json.loads(f)
 
 if __name__ == '__main__':
-    Fire(main)
+    print(client.list_database_names())
 
