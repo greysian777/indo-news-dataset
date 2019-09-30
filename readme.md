@@ -25,6 +25,7 @@ sumber yang supported:
 
 !TODO
 - [ ] connect to mongodb!
+- [ ] implement a data pipeline using dagster
 - [ ] make migration to mongodb stuff in azure
 - [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
 - [x] buat proses multiprocessing
