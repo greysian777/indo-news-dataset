@@ -12,8 +12,8 @@ lxml = "*"
 requests = "*"
 pandas = "*"
 fire = "*"
-jupyter = "*"
 tqdm = "*"
+colorama = "*"
 
 [requires]
 python_version = "3.7"

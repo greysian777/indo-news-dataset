@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from ehe import Paragraf
 from multiprocessing import Pool
+from colorama import Back, Fore, init
 from tqdm import tqdm
 import numpy as np
 import os
@@ -10,6 +10,10 @@ import json
 from glob import glob
 import fire
 import random
+from ehe import Paragraf
+
+# colorama autoreset
+init(autoreset=True)
 
 
 def pembagi(l, n):
@@ -23,7 +27,7 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
     list_of_links = [l for l in list_of_links if 'money' not in l]
     list_of_links = np.asarray([l for l in list_of_links if 'lifestyle' not in l])
     berita = Paragraf()
-    print('getting ', len(list_of_links))
+    print(f'{Fore.CYAN}getting ', len(list_of_links))
     with Pool(n_jobs) as p:
         if sumber == 'kompas':
             hasil = list(
@@ -38,7 +42,7 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
             hasil = list(
                 tqdm(p.imap(berita.get_bisnis, list_of_links), total=len(list_of_links)))
         else:
-            print('sumber belum ditentukan')
+            print(f'{Back.RED}sumber belum ditentukan')
             raise ValueError
 
         p.terminate()
@@ -59,8 +63,8 @@ def run(sumber, path_to_txt, chunks=100):
         time.sleep(random.randint(5, 29))
         main(link, sumber=sumber, nama_file=file_name)
         time.sleep(random.randint(10, 60))
-    print('finished\n\n\n\n')
-    print('now aggregating json files')
+    print(f'{Fore.GREEN}finished\n\n\n\n')
+    print(f'{Fore.CYAN}now aggregating json files')
     json_aggregator(sumber)
 
 
@@ -77,7 +81,7 @@ def json_aggregator(sumber):
             with open(file) as f:
                 berita.append(json.load(f))
         except Exception as e:
-            print(str(e))
+            print(f"{Fore.RED}{str(e)}")
             pass
 
     # check if path available

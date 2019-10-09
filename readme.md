@@ -27,6 +27,9 @@ sumber yang supported:
 - [ ] connect to mongodb!
 - [ ] implement a data pipeline using dagster
 - [ ] make migration to mongodb stuff in azure
+- [ ] implement colorama on stuff
+  - [ ] errors
+  - [ ] success
 - [x] bikin json aggregator jadi auto ngerun kalo udah selesai ngescrape
 - [x] buat proses multiprocessing
     - [x] multiprocessing nya buat supaya bagi per 1000 link, proses paragraf, delete link yang sudah di scrape, repeat

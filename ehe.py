@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from colorama import Fore, init, Back
 from bs4 import BeautifulSoup
 from datetime import date
 from typing import List, Dict, Text
@@ -11,7 +12,7 @@ import time
 import os
 import random
 
-
+init(autoreset=True)
 USER_AGENTS: List[Text] = open('user_agent.txt').read().splitlines()
 headers = {
     'User-Agent': f'{random.choice(USER_AGENTS)}'}
@@ -42,9 +43,8 @@ class Link():
                     set([a['href'] for a in box.find_all('a') if len(a['href']) > 55]))
                 with open(f'links/{self.sumber}_links.txt', 'a') as f:
                     for link in links:
-                        # print(link)
                         f.writelines(link+'\n')
-        print('save ke txt berhasil')
+        print(f'{Back.GREEN}save ke txt berhasil')
 
     def pull_link_tempo(self) -> None:
         for current_date in tqdm(self.list_of_date, desc='links saved'):
@@ -56,9 +56,8 @@ class Link():
             links = list(set([a['href'] for a in box.find_all('a')]))
             with open(f'links/{self.sumber}_links.txt', 'a') as f:
                 for link in links:
-                    # print(link)
                     f.writelines(link+'\n')
-        print('berhasil save txt')
+        print(f'{Back.GREEN}berhasil save txt')
 
     def pull_link_detik(self) -> None:
         # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
@@ -67,7 +66,6 @@ class Link():
                 '%m'), current_date.strftime('%Y')
             try:
                 link = f'https://finance.detik.com/indeks?date={d}%2F{m}%2F{y}'
-                print(link)
                 req = requests.get(link, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
                 links = list(set([artikel.div.a['href']
@@ -76,8 +74,8 @@ class Link():
                     for link in links:
                         f.writelines(link+'\n')
             except Exception as e:
-                print('error', str(e))
-        print('berhasil save ke txt')
+                print(f'{Fore.RED}error', str(e))
+        print(f'{Fore.GREEN}berhasil save ke txt')
 
     def pull_link_kompas(self) -> None:
         for date_current in self.list_of_date:
@@ -96,7 +94,7 @@ class Link():
                 with open(f'links/{FILE_NAME}_kompas_links.txt', 'a+') as f:
                     for link in links:
                         f.writelines(link+'\n')
-        print('berhasil save txt')
+        print(f'{Fore.GREEN}berhasil save txt')
 
     def run(self):
         if self.sumber.lower() == 'kompas':
@@ -108,7 +106,7 @@ class Link():
         elif self.sumber.lower() == 'bisnis':
             return self.pull_link_bisnis()
         else:
-            print('sumber tidak jelas, dick stuck.')
+            print(f'{Back.RED}sumber tidak jelas, dick stuck.')
 
 
 class Paragraf:
@@ -122,12 +120,12 @@ class Paragraf:
         if self.txt_mode:
             list_of_links = open(txt_path).read().splitlines()
             self.sumber = txt_path.split('.')[0].split('/')[-1].split('_')[0]
-            print(self.sumber)
+            print(f'{Back.GREEN}{self.sumber}')
         else:
-            print('you need to specify the list of links')
+            print(f'{Back.RED}you need to specify the list of links')
 
         _FILE_NAME = save_to_folder+f'{FILE_NAME}_{self.sumber}_p.csv'
-        print(f'get {len(list_of_links)} links')
+        print(f'{Fore.CYAN}get {len(list_of_links)} links')
         save_df = pd.DataFrame(
             columns=['judul',  'tanggal_berita', 'paragraf', 'tanggal_scraped'])
         for link in tqdm(list_of_links, desc='links scraped'):
@@ -141,16 +139,16 @@ class Paragraf:
                 elif self.sumber == 'tempo':
                     series = pd.Series(self.get_tempo(link))
                 else:
-                    print('sumber is not recognized, dick stuck')
+                    print(f'{Back.RED}sumber is not recognized, dick stuck')
                     os._exit()
                 save_df = save_df.append(series, ignore_index=True)
                 save_df.to_csv(_FILE_NAME, mode='a', header=False)
             except Exception as e:
-                print(f'error on link {link}')
+                print(f'{Fore.RED}error on link {link}')
                 print(str(e))
                 continue
         save_df.to_csv(_FILE_NAME)
-        print(f'sukses mengambil semua paragraf di {_FILE_NAME}')
+        print(f'{Fore.GREEN}sukses mengambil semua paragraf di {_FILE_NAME}')
 
     def berita_template(self, judul, tanggal_berita, paragraf, tanggal_scraped=date.today(), link=None) -> Dict:
         """ dictionary template for berita """
@@ -176,7 +174,7 @@ class Paragraf:
                 par = ' '.join([p.text for p in reader.find_all(
                     'p') if 'Baca juga' not in p.text])
             elif 'jeo' in link.split('/'):
-                print('jeo link')
+                print(f'{Back.RED}jeo link')
                 return None
             else:
                 par = ' '.join([p.text for p in reader.find_all(
@@ -186,7 +184,7 @@ class Paragraf:
             judul = s.find("h1").text.strip()
         except Exception as e:
             print(str(e))
-            print(link)
+            print(f'{Back.RED}{link}')
             return None
         return self.berita_template(judul, tanggal_berita, par, link=link)
 
@@ -213,9 +211,9 @@ class Paragraf:
             box = s.find('div', class_='itp_bodycontent detail_text')
             kumpulan_paragraf.append(box.text)
         except:
-            print(f'getting {int(last_page)} pages\n\n\n')
+            print(f'{Fore.CYAN}getting {int(last_page)} pages\n\n\n')
             for i in range(2, int(last_page)+1):
-                print(f'{i} / {last_page}')
+                print(f'{Fore.CYAN}{i} / {last_page}')
                 r = requests.get(link+f'{i}')
                 s = BeautifulSoup(r.content, 'lxml')
                 box = s.find('div', class_='itp_bodycontent detail_text')
