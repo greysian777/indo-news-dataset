@@ -78,7 +78,8 @@ class Link():
         print(f'{Fore.GREEN}berhasil save ke txt')
 
     def pull_link_kompas(self) -> None:
-        for date_current in self.list_of_date:
+        for i,date_current in enumerate(self.list_of_date):
+            print(f'{Back.CYAN}{i}')
             for j in tqdm(range(1, self.pagination), desc='page'):
                 url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
@@ -89,8 +90,14 @@ class Link():
                 else:
                     break
                 box = soup.find('div', class_='latest--indeks mt2 clearfix')
-                links = list(set([a['href']
-                                  for a in box.find_all('a') if 'travel' not in a['href']]))
+                try:
+                    links = list(set([a['href']
+                                      for a in box.find_all('a') if 'travel' not in a['href']]))
+                except:
+                    print(f'{Fore.RED}failed')
+                    continue
+                print(f'{Back.GREEN}saved.')
+                print(links)
                 with open(f'links/{FILE_NAME}_kompas_links.txt', 'a+') as f:
                     for link in links:
                         f.writelines(link+'\n')
