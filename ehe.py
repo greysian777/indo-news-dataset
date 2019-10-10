@@ -81,7 +81,7 @@ class Link():
         for i,date_current in enumerate(self.list_of_date):
             print(f'{Back.CYAN}{i}')
             for j in tqdm(range(1, self.pagination), desc='page'):
-                url = f'https://indeks.kompas.com/all/{str(date_current)}/{j}'
+                url = f'https://indeks.kompas.com/?site=all&date={date_current}'
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
@@ -96,8 +96,6 @@ class Link():
                 except:
                     print(f'{Fore.RED}failed')
                     continue
-                print(f'{Back.GREEN}saved.')
-                print(links)
                 with open(f'links/{FILE_NAME}_kompas_links.txt', 'a+') as f:
                     for link in links:
                         f.writelines(link+'\n')
