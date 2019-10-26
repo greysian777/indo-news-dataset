@@ -20,6 +20,11 @@ FILE_NAME: Text = date.today().strftime("%Y-%m-%d")
 
 
 class Link():
+    """
+    list of date: range tanggal
+    sumber: sumber berita terdiri dari: kompas, bisnis, detik, dan tempo
+    pagination: secara default akan mencari 50 halaman pertam
+    """
     def __init__(self, list_of_date: List[Text], sumber: Text, pagination=50, txt_mode=True):
         self.pagination = pagination+1
         self.list_of_date = np.asarray(list_of_date)
@@ -30,6 +35,9 @@ class Link():
             os.makedirs('links/')
 
     def pull_link_bisnis(self) -> None:
+        """
+        link yang di dapet tiap page, langsung di simpan ke txt file yang sesuai
+        """
         for current_date in tqdm(self.list_of_date, desc='links scraped'):
             current_date = current_date.strftime('%d+%B+%Y')
             for j in range(self.pagination+1):
@@ -47,6 +55,9 @@ class Link():
         print(f'{Back.GREEN}save ke txt berhasil')
 
     def pull_link_tempo(self) -> None:
+        """
+        link yang di dapet tiap page, langsung di simpan ke txt file yang sesuai
+        """
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             current_date = current_date.strftime('%Y/%m/%d')
             link = f'https://www.tempo.co/indeks/{current_date}/bisnis'
@@ -60,7 +71,9 @@ class Link():
         print(f'{Back.GREEN}berhasil save txt')
 
     def pull_link_detik(self) -> None:
-        # https://news.detik.com/indeks/all/{page_number}?date={08}}/{month}/{year}}
+        """
+        link yang di dapet tiap page, langsung di simpan ke txt file yang sesuai
+        """
         for current_date in tqdm(self.list_of_date, desc='links saved'):
             d, m, y = current_date.strftime('%d'), current_date.strftime(
                 '%m'), current_date.strftime('%Y')
@@ -78,6 +91,9 @@ class Link():
         print(f'{Fore.GREEN}berhasil save ke txt')
 
     def pull_link_kompas(self) -> None:
+        """
+        link yang di dapet tiap page, langsung di simpan ke txt file yang sesuai
+        """
         for i,date_current in enumerate(self.list_of_date):
             print(f'{Back.CYAN}{i}')
             for j in tqdm(range(1, self.pagination), desc='page'):

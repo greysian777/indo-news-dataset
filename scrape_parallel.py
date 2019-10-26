@@ -17,6 +17,7 @@ init(autoreset=True)
 
 
 def pembagi(l, n):
+    """ slicer list, l --> berapa element dalam n part """
     for i in range(0, len(l), n):
         yield l[i:i+n]
 
@@ -51,7 +52,7 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
             json.dump(hasil, f, indent=4, sort_keys=True, default=str)
 
 
-def run(sumber, path_to_txt, chunks=100):
+def run(sumber:str, path_to_txt:str, chunks:int=100):
     """ sumber: berita, path_to_txt: txt file with link per line, chunks: saving every n_th chunk
         will dump to .json with part number, then aggregate after finished
     """
@@ -68,7 +69,7 @@ def run(sumber, path_to_txt, chunks=100):
     json_aggregator(sumber)
 
 
-def json_aggregator(sumber):
+def json_aggregator(sumber:str):
     """
     aggregate a list of json files inside a directory
      """
@@ -84,7 +85,6 @@ def json_aggregator(sumber):
             print(f"{Fore.RED}{str(e)}")
             pass
 
-    # check if path available
     if not os.path.exists(f'hasil/{sumber}'):
         os.makedirs(f'hasil/{sumber}')
     berita = [sub for i in berita for sub in i]

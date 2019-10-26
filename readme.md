@@ -23,8 +23,13 @@ sumber yang supported:
 **scraping with multiprocessing**
 `python scrape_parallel.py <SUMBER> <PATH_TO_LINK_TXT> <N_DAYS>`
 
+
+### implementation trouble
+- dalam ngepull link seharusnya bisa dibikin lebih "mudah dibaca" tapi sulit karena tiap "box" yang harus di cari itu berbeda tiap news source.
+
 !TODO
-- [ ] connect to mongodb!
+- [ ] connect ke mongodb
+  - [ ] seharusnya link yang di save bisa masuk ke dalam database, jangan txt biasa
 - [ ] implement a data pipeline using dagster
 - [ ] make migration to mongodb stuff in azure
 - [x] implement colorama on stuff
