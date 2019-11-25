@@ -28,6 +28,7 @@ sumber yang supported:
 - dalam ngepull link seharusnya bisa dibikin lebih "mudah dibaca" tapi sulit karena tiap "box" yang harus di cari itu berbeda tiap news source.
 
 !TODO
+- [ ] buat versi scrapynya
 - [ ] connect ke mongodb
   - [ ] seharusnya link yang di save bisa masuk ke dalam database, jangan txt biasa
 - [ ] implement a data pipeline using dagster
