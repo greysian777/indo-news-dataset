@@ -2,5 +2,6 @@
 - 9920 berita selesai dalam 32 detik
 
 todo:
-- [ ] buat scraping paragraph
-- [ ] buat scraping interval tanggal
+- [x] buat scraping paragraph
+  - [ ] handle 403 error
+- [x] buat scraping interval tanggal
