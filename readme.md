@@ -2,6 +2,8 @@
 
 made a dataset.
 
+also checkout the scrapy version.
+
 ## kumpulan dataset
 [here](https://github.com/svmihar/ta-dump)
 
