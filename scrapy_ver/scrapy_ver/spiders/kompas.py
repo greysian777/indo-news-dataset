@@ -18,6 +18,9 @@ class KompasSpider(scrapy.Spider):
             logging.info(f'URL: {url}/?page={page}/')
             yield scrapy.Request(url=url_fix, callback=self.parse_page)
 
+    def parse_paragraf(self, response: scrapy.http.Response):
+        pass
+
     def parse_page(self, response: scrapy.http.Response):
         link = response.xpath('//a[@class="article__link"]/@href').extract()
         judul = response.xpath('//a[@class="article__link"]/text()').extract()

@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/Users/svmihar/miniconda/bin/python",
+    "python.pythonPath": "/Users/svmihar/miniconda/envs/indo-scraping/bin/python",
     "python.linting.enabled": true
 }
