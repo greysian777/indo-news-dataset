@@ -25,7 +25,8 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
     if not os.path.exists(f'hasil/{sumber}'):
         os.makedirs(f'hasil/{sumber}')
     list_of_links = [l for l in list_of_links if 'money' not in l]
-    list_of_links = np.asarray([l for l in list_of_links if 'lifestyle' not in l])
+    list_of_links = np.asarray(
+        [l for l in list_of_links if 'lifestyle' not in l])
     berita = Paragraf()
     print(f'{Fore.CYAN}getting ', len(list_of_links))
     with Pool(n_jobs) as p:
@@ -49,6 +50,36 @@ def main(list_of_links, sumber, nama_file, n_jobs=25):
         p.join()
         with open(f'hasil/{sumber}/{nama_file}___dump_parallel_hasil.json', "a+") as f:
             json.dump(hasil, f, indent=4, sort_keys=True, default=str)
+
+
+def run_csv(sumber, PATH_TO_CSV, chunks=100):
+    if os.path.exists(PATH_TO_CSV):
+        import pandas as pd
+        df = pd.read_csv(PATH_TO_CSV)
+        if 'links' in df.columns:
+            list_of_links = list(set(df.links.values))
+        elif 'link' in df.columns:
+            list_of_links = list(set(df.link.values))
+        elif 'a' in df.columns:
+            list_of_links = list(set(df.a.values))
+        else:
+            print('choose a column that contains all the links')
+            print(df.columns)
+            LINK_COLUMN = input('\n>')
+            print(LINK_COLUMN)
+            list_of_links = list(set(df[LINK_COLUMN].values))
+
+        print(f'{Fore.GREEN} will scrape {len(list_of_links)} links')
+        list_of_links = np.asarray(list(pembagi(list_of_links, chunks)))
+        for i, link in enumerate(list_of_links):
+            file_name = f'{i}_{sumber}'
+            print(f'part {i}/{len(list_of_links)}')
+            time.sleep(random.randint(5, 29))
+            main(link, sumber=sumber, nama_file=file_name)
+            time.sleep(random.randint(10, 60))
+        print(f'{Fore.GREEN}finished\n\n\n\n')
+        print(f'{Fore.CYAN}now aggregating json files')
+        json_aggregator(sumber)
 
 
 def run(sumber, path_to_txt, chunks=100):
@@ -93,4 +124,4 @@ def json_aggregator(sumber):
 
 
 if __name__ == "__main__":
-    fire.Fire(run)
+    fire.Fire()

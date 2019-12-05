@@ -9,6 +9,9 @@ import scrapy
 
 
 class ScrapyVerItem(scrapy.Item):
+    judul = scrapy.Field()
+    tanggal = scrapy.Field()
+    kategori = scrapy.Field()
+    paragraf = scrapy.Field()
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
