@@ -29,6 +29,15 @@ class Link():
             os.makedirs('hasil/')
             os.makedirs('links/')
 
+    def parse_pagination(self, link): 
+        r = requests.get(link)
+        soup = BeautifulSoup(r.content,'lxml')
+        last_page = soup.find('a',class_='paging__link paging__link--prev')['data-ci-pagination-page']
+        if last_page is None: 
+            return 50
+        else: 
+            return int(last_page)
+
     def pull_link_bisnis(self) -> None:
         for current_date in tqdm(self.list_of_date, desc='links scraped'):
             current_date = current_date.strftime('%d+%B+%Y')
@@ -79,9 +88,11 @@ class Link():
 
     def pull_link_kompas(self) -> None:
         for i,date_current in enumerate(self.list_of_date):
-            print(f'{Back.CYAN}{i}')
-            for j in tqdm(range(1, self.pagination), desc='page'):
-                url = f'https://indeks.kompas.com/?site=all&date={date_current}'
+            print(f'{Back.CYAN}{i}/{len(self.list_of_date)}')
+            url = f'https://indeks.kompas.com/?site=all&date={date_current}'
+            page_count = self.parse_pagination(url) 
+            for j in tqdm(range(1, page_count), desc='page'):
+                url = f'https://indeks.kompas.com/?site=all&date={date_current}&page={j}'
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
                 req = requests.get(url, headers=headers)
                 soup = BeautifulSoup(req.content, 'lxml')
