@@ -13,6 +13,14 @@ def generate_links(n_days, sumber, file_name=FILE_NAME,save_csv=True, save_json=
     list_of_dates = generate_n_days_from_today(n_days=n_days)
     puller = Link(list_of_dates, sumber=sumber, txt_mode=True)
     puller.run()
+def generate_links_parallel(n_days, sumber, file_name=FILE_NAME,save_csv=True, save_json=False):
+    def list_of_links():
+        "get the list of links to be scraped"
+        list_of_dates = generate_n_days_from_today(n_days=n_days)
+        link_kompas = Link(list_of_dates, sumber=sumber, txt_mode=True)
+        return link_kompas.get_all_link_kompas()
+    links_to_get = list_of_links()
+    pass
 
 def generate_paragraph_from_txt(path_to_txt, parallel=False):
     """ generating single thread scraping paragraph from a given txt file of links """

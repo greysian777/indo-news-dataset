@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import date
 from typing import List, Dict, Text
 import numpy as np
+from typing import List
 import pandas as pd
 from tqdm import tqdm
 import requests
@@ -29,13 +30,14 @@ class Link():
             os.makedirs('hasil/')
             os.makedirs('links/')
 
-    def parse_pagination(self, link): 
+    def parse_pagination(self, link):
         r = requests.get(link)
-        soup = BeautifulSoup(r.content,'lxml')
-        last_page = soup.find('a',class_='paging__link paging__link--prev')['data-ci-pagination-page']
-        if last_page is None: 
+        soup = BeautifulSoup(r.content, 'lxml')
+        last_page = soup.find(
+            'a', class_='paging__link paging__link--prev')['data-ci-pagination-page']
+        if last_page is None:
             return 50
-        else: 
+        else:
             return int(last_page)
 
     def pull_link_bisnis(self) -> None:
@@ -86,11 +88,35 @@ class Link():
                 print(f'{Fore.RED}error', str(e))
         print(f'{Fore.GREEN}berhasil save ke txt')
 
-    def pull_link_kompas(self) -> None:
-        for i,date_current in enumerate(self.list_of_date):
+    def get_all_link_kompas(self) -> List[str]:
+        hasil = []
+        for i, date_current in enumerate(self.list_of_date):
             print(f'{Back.CYAN}{i}/{len(self.list_of_date)}')
             url = f'https://indeks.kompas.com/?site=all&date={date_current}'
-            page_count = self.parse_pagination(url) 
+            page_count = self.parse_pagination(url)
+            for j in tqdm(range(1, page_count), desc='page'):
+                url = f'https://indeks.kompas.com/?site=all&date={date_current}&page={j}'
+                hasil.append(url)
+        return hasil
+
+    def run_one_link_kompas(self, link_kompas: str) -> List[str]:
+        headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
+        req = requests.get(link_kompas, headers=headers)
+        soup = BeautifulSoup(req.content, 'lxml')
+        box = soup.find('div', class_='latest--indeks mt2 clearfix')
+        try:
+            links = list(set([a['href']
+                                for a in box.find_all('a') if 'travel' not in a['href']]))
+        except:
+            print(f'{Fore.RED}failed')
+        return links
+
+
+    def pull_link_kompas(self) -> None:
+        for i, date_current in enumerate(self.list_of_date):
+            print(f'{Back.CYAN}{i}/{len(self.list_of_date)}')
+            url = f'https://indeks.kompas.com/?site=all&date={date_current}'
+            page_count = self.parse_pagination(url)
             for j in tqdm(range(1, page_count), desc='page'):
                 url = f'https://indeks.kompas.com/?site=all&date={date_current}&page={j}'
                 headers = {'User-Agent': f'{random.choice(USER_AGENTS)}'}
